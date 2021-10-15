@@ -1,10 +1,10 @@
-import 'package:fe_bagikan/pages/register_page.dart';
+import 'package:fe_bagikan/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fe_bagikan/helper/layout.dart';
 
-class LoginPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
 bool _passwordVisible = false;
@@ -13,10 +13,10 @@ void initState() {
   _passwordVisible = true;
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final formKey = GlobalKey<FormState>();
 
-  String _username, _password;
+  String _username, _password, _email;
   bool _btnEnabled = false;
 
   @override
@@ -59,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
                         padding: EdgeInsets.only(left: 15),
                         margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(10),
                             color: Color(0xffE1E1E1)),
                         child: TextFormField(
                           onSaved: (input) => _username = input,
@@ -69,13 +69,27 @@ class _LoginPageState extends State<LoginPage> {
                               hintStyle: TextStyle(fontSize: 14)),
                         ),
                       ),
-
+                      //Email
+                      Container(
+                        padding: EdgeInsets.only(left: 15),
+                        margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Color(0xffE1E1E1)),
+                        child: TextFormField(
+                          onSaved: (input) => _email = input,
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Masukkan Email",
+                              hintStyle: TextStyle(fontSize: 14)),
+                        ),
+                      ),
                       //Password
                       Container(
                         padding: EdgeInsets.only(left: 15),
                         margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(10),
                           color: Color(0xffE1E1E1),
                         ),
                         child: TextFormField(
@@ -102,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ],
                   )),
-              SizedBox(height: 90),
+              SizedBox(height: 22),
               GestureDetector(
                   child: Container(
                     height: 46,
@@ -112,8 +126,11 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     child: Center(
                         child: Text(
-                      "Login",
-                      style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w700),
+                      "Register",
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700),
                     )),
                   ),
                   onTap: () {
@@ -127,19 +144,19 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    "Don't have an account? ",
+                    "Already have an account? ",
                     style: TextStyle(fontSize: 14),
                   ),
                   GestureDetector(
                     child: Text(
-                      "Register",
+                      "Login",
                       style: TextStyle(fontSize: 14, color: Color(0xff1443C3)),
                     ),
                     onTap: () {
                       Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => RegisterPage()));
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoginPage()));
                     },
                   ),
                 ],
