@@ -16,7 +16,7 @@ class _OnBoardingState extends State<OnBoarding> {
           PageViewModel(
             titleWidget: Center(
               child: Text(
-                "Konsep Baru",
+                "Sumbangin",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
@@ -24,7 +24,7 @@ class _OnBoardingState extends State<OnBoarding> {
             bodyWidget: Center(
               child: Expanded(
                 child: Text(
-                  "Berjualan jadi lebih mudah dengan tampilan baru aplikasi.",
+                  "Membantu untuk menyumbangkan barang bekas layak pakaimu agar sampai pada orang yang tepat",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
@@ -41,7 +41,7 @@ class _OnBoardingState extends State<OnBoarding> {
           PageViewModel(
             titleWidget: Center(
               child: Text(
-                "Kelola Data Order",
+                "Cari Barang",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
@@ -49,7 +49,7 @@ class _OnBoardingState extends State<OnBoarding> {
             bodyWidget: Center(
               child: Expanded(
                 child: Text(
-                  "Memudahkan sales dalam mengelola data order pelanggan dengan baik.",
+                  "Membantu untuk mencari barang bekas layak pakai yang kamu butuhkan.",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
@@ -66,7 +66,7 @@ class _OnBoardingState extends State<OnBoarding> {
           PageViewModel(
             titleWidget: Center(
               child: Text(
-                "Manajemen Sales Force",
+                "Himbauan",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
               ),
@@ -74,7 +74,7 @@ class _OnBoardingState extends State<OnBoarding> {
             bodyWidget: Center(
               child: Expanded(
                 child: Text(
-                  "Membantu sales dalam bekerja dengan berbagai fitur yang tersedia.",
+                  "Hati-hati terhadap penipuan, selalu waspada saat mencari dan menyumbangkan barang bekasmu",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,

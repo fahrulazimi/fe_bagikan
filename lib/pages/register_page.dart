@@ -1,3 +1,4 @@
+import 'package:fe_bagikan/api/post_model.dart';
 import 'package:fe_bagikan/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fe_bagikan/helper/layout.dart';
@@ -14,9 +15,15 @@ void initState() {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  PostResult postResult = null;
+
   final formKey = GlobalKey<FormState>();
 
   String _username, _password, _email;
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+
   bool _btnEnabled = false;
 
   @override
@@ -37,7 +44,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               SizedBox(height: 10),
               Text(
-                "Login Now",
+                "Register Now",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
               ),
               SizedBox(height: 12),
@@ -62,6 +69,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             borderRadius: BorderRadius.circular(10),
                             color: Color(0xffE1E1E1)),
                         child: TextFormField(
+                          controller: _usernameController,
                           onSaved: (input) => _username = input,
                           decoration: InputDecoration(
                               border: InputBorder.none,
@@ -77,6 +85,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             borderRadius: BorderRadius.circular(10),
                             color: Color(0xffE1E1E1)),
                         child: TextFormField(
+                          controller: _emailController,
                           onSaved: (input) => _email = input,
                           decoration: InputDecoration(
                               border: InputBorder.none,
@@ -93,6 +102,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           color: Color(0xffE1E1E1),
                         ),
                         child: TextFormField(
+                            controller: _passwordController,
                             onSaved: (input) => _password = input,
                             obscureText: !_passwordVisible,
                             decoration: InputDecoration(
@@ -134,10 +144,20 @@ class _RegisterPageState extends State<RegisterPage> {
                     )),
                   ),
                   onTap: () {
-                    // Navigator.pushReplacement(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => VerifTelegram()));
+                    if(_usernameController.text.isNotEmpty && _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty)
+                    {
+                      PostResult.connectToAPI(_usernameController.text, _emailController.text, _passwordController.text).then((input) {
+                      postResult = input;
+                    }
+                    );
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => LoginPage()));
+                    }
+                    else{
+                      print(Text("data masih ada yang kosong"));
+                    }
                   }),
               SizedBox(height: 15),
               Row(
@@ -153,10 +173,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       style: TextStyle(fontSize: 14, color: Color(0xff1443C3)),
                     ),
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LoginPage()));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => LoginPage()));
                     },
                   ),
                 ],
