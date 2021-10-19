@@ -29,6 +29,7 @@ dependencies:
   dio:
   fluttertoast:
   rflutter_alert: ^2.0.2
+  dropdownfield: ^1.0.3
 
 dev_dependencies:
   flutter_test:
