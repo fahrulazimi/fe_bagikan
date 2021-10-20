@@ -138,41 +138,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         ),
                       ),
 
-                      //password
-                      Container(
-                        margin: EdgeInsets.only(left: 5),
-                        alignment: Alignment.topLeft,
-                        child: Text("Password", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),)),
-                      Container(
-                        padding: EdgeInsets.only(left: 15),
-                        margin: EdgeInsets.fromLTRB(0, 5, 0, 15),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Color(0xffE1E1E1)),
-                        child: TextFormField(
-                          controller: _passwordController,
-                          obscureText: !_passwordVisible,
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Password",
-                              hintStyle: TextStyle(fontSize: 14),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                    _passwordVisible
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                    color: Color(0xffC4C4C4)),
-                                onPressed: () {
-                                  setState(() {
-                                    _passwordVisible = !_passwordVisible;
-                                  });
-                                },
-                                color: Color(0xffC4C4C4),
-                              ),
-                            ),
-                        ),
-                      ),
-
                       //button selesai
                       Container(
                         child:

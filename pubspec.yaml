@@ -25,11 +25,12 @@ dependencies:
   flutter:
     sdk: flutter
   introduction_screen: ^2.1.0
-  http: ^0.12.0+2
+  http: ^0.12.2
   dio:
   fluttertoast:
   rflutter_alert: ^2.0.2
   dropdownfield: ^1.0.3
+  shared_preferences: ^0.5.3+4
 
 dev_dependencies:
   flutter_test:

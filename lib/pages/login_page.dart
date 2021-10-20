@@ -132,8 +132,8 @@ class _LoginPageState extends State<LoginPage> {
                   onTap: () {
                     if(_emailController.text.isNotEmpty && _passwordController.text.isNotEmpty)
                     {
-                      LoginResult.login(_emailController.text, _passwordController.text).then((input) {
-                      loginResult = input;
+                      LoginResult.login(_emailController.text, _passwordController.text).then((value) {
+                      loginResult = value;
                       setState(() {
                         if(loginResult == null){
                           Alert(
@@ -142,10 +142,10 @@ class _LoginPageState extends State<LoginPage> {
                           desc: "Email atau password yang anda masukkan salah",
                           type: AlertType.error,
                         ).show();
-                          print(Text("Data yang dimasukkan salah"));
+                          print("Data yang dimasukkan salah");
                         }
                         else{
-                          print(loginResult.massage);
+                          print(loginResult.message);
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(

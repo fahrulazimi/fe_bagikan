@@ -2,46 +2,42 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class PostResult {
-  String massage;
+  String message;
 
-  PostResult({this.massage});
+  PostResult({this.message});
 
   factory PostResult.createPostResult(Map<String, dynamic> object) {
-    return PostResult(massage: object['massage']);
+    return PostResult(message: object["message"]);
   }
 
   static Future<PostResult> connectToAPI(
       String username, String email, String password) async {
-
-    String apiUrlRegister = "http://192.168.100.46:5000/api/auth/register";
+    String apiUrlRegister = "http://192.168.100.46:8000/api/register";
 
     var apiResult = await http.post(apiUrlRegister,
         body: {"username": username, "email": email, "password": password});
     var jsonObject = json.decode(apiResult.body);
 
-    return PostResult.createPostResult(jsonObject); 
+    return PostResult.createPostResult(jsonObject);
   }
-  
 }
 
 class LoginResult {
-  String massage;
+  String message;
 
-  LoginResult({this.massage});
+  LoginResult({this.message});
 
   factory LoginResult.createLoginResult(Map<String, dynamic> object) {
-    return LoginResult(massage: object['massage']);
+    return LoginResult(message: object["message"]);
   }
 
-static Future<LoginResult> login(
-      String email, String password) async {
+  static Future<LoginResult>login(String username, String password) async {
+    String apiUrlLogin = "http://192.168.100.46:8000/api/login/admin";
 
-    String apiUrlLogin = "http://192.168.100.46:5000/api/auth/login";
-
-    var apiResult = await http.post(apiUrlLogin,
-        body: {"email": email, "password": password});
+    var apiResult = await http.post(apiUrlLogin, 
+    body: {"username": username, "password": password});
     var jsonObject = json.decode(apiResult.body);
 
-    return LoginResult.createLoginResult(jsonObject); 
+    return LoginResult.createLoginResult(jsonObject);
   }
 }

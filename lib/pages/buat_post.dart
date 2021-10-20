@@ -1,6 +1,7 @@
 import 'package:dropdownfield/dropdownfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fe_bagikan/helper/layout.dart';
 
 class BuatPostPage extends StatefulWidget {
   @override
@@ -32,7 +33,9 @@ List<String> expired = [
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return Scaffold(
+      appBar: AppBar(title: Text("buatpost"),),
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.all(20),
@@ -51,6 +54,7 @@ List<String> expired = [
 
               Form(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       //Nama Barang
                       Container(
@@ -178,7 +182,7 @@ List<String> expired = [
                         child: Text("Upload Gambar", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),)),
                         GestureDetector(
                           child: Container(
-                            margin: EdgeInsets.only(top: 5, right: MediaQuery.of(context).size.width/2 + 20),
+                            margin: EdgeInsets.only(top: 5),
                             height: 46,
                             width: 120,
                             decoration: BoxDecoration(
