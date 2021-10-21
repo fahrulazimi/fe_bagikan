@@ -1,3 +1,4 @@
+import 'package:fe_bagikan/pages/dashboard_admin/adminDashobard.dart';
 import 'package:fe_bagikan/pages/editProfile.dart';
 import 'package:fe_bagikan/pages/homepage.dart';
 import 'package:fe_bagikan/pages/profile2.dart';
@@ -15,8 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: "Poppins"),
-      home: SplashScreen(),
+      home: AdminPage(),
     );
   }
 }
-
