@@ -1,16 +1,17 @@
 import 'package:fe_bagikan/api/post_model.dart';
 import 'package:fe_bagikan/api/user_model.dart';
+import 'package:fe_bagikan/pages/dashboard_admin/adminDashobard.dart';
 import 'package:fe_bagikan/pages/homepage.dart';
-import 'package:fe_bagikan/pages/login_page_admin.dart';
+import 'package:fe_bagikan/pages/login_page.dart';
 import 'package:fe_bagikan/pages/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fe_bagikan/helper/layout.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginPage extends StatefulWidget {
+class AdminLoginPage extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _AdminLoginPageState createState() => _AdminLoginPageState();
 }
 
 bool _passwordVisible = false;
@@ -19,10 +20,11 @@ void initState() {
   _passwordVisible = true;
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _AdminLoginPageState extends State<AdminLoginPage> {
 
   String token;
   LoginResult loginResult;
+  AdminLoginResult adminLoginResult;
 
   final formKey = GlobalKey<FormState>();
 
@@ -35,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
   void saveData() async
   {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setString('token', loginResult.token);  
+    pref.setString('token', adminLoginResult.token);  
     
   }
   Future<String> getToken() async{
@@ -61,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SizedBox(height: 10),
               Text(
-                "Login Now",
+                "Login Admin Now",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
               ),
               SizedBox(height: 12),
@@ -143,10 +145,10 @@ class _LoginPageState extends State<LoginPage> {
                   onTap: () {
                     if(_usernameController.text.isNotEmpty && _passwordController.text.isNotEmpty)
                     {
-                      LoginResult.login(_usernameController.text, _passwordController.text).then((value) {
-                      loginResult = value;
+                      AdminLoginResult.adminLogin(_usernameController.text, _passwordController.text).then((value) {
+                      adminLoginResult = value;
                       setState(() {
-                        if(loginResult.token == null){
+                        if(adminLoginResult.token == null){
                           Alert(
                           context: context,
                           title: "Login Gagal",
@@ -156,7 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                           print("Data yang dimasukkan salah");
                         }
                         else {
-                          print(loginResult.token);
+                          print(adminLoginResult.token);
                           saveData();
                           getToken().then((s){
                             token = s;
@@ -165,7 +167,7 @@ class _LoginPageState extends State<LoginPage> {
                           Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Homepage()), (route)=>false);
+                                builder: (context) => AdminPage()), (route)=>false);
                       }});
                     }
                     );        
@@ -180,45 +182,24 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    "Don't have an account? ",
+                    "Login as user? ",
                     style: TextStyle(fontSize: 14),
                   ),
                   GestureDetector(
                     child: Text(
-                      "Register",
+                      "Here",
                       style: TextStyle(fontSize: 14, color: Color(0xff1443C3)),
                     ),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => RegisterPage()));
+                            builder: (context) => LoginPage()));
                     },
                   ),
                 ],
               ),
-              SizedBox(height: 5),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    "Login as admin? ",
-                    style: TextStyle(fontSize: 10),
-                  ),
-                  GestureDetector(
-                    child: Text(
-                      "Here",
-                      style: TextStyle(fontSize: 10, color: Color(0xff1443C3)),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AdminLoginPage()));
-                    },
-                  ),
-                ],
-              )
+              
             ],
           ),
         ),

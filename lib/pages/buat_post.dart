@@ -33,7 +33,7 @@ Future<String> getToken() async{
       token = s;
       setState(() {
         print(token);
-        BuatPost.buatPost(token, _namaBarangController.text, _deskripsiBarangController.text).then((value) {
+        BuatPost.buatPost(token, _namaBarangController.text, _deskripsiBarangController.text, _lokasiController.text, _kategoriController.text, _expiredController.text, _picturePostController.text).then((value) {
           buatPost = value;
           setState(() {
             print(buatPost);
@@ -71,6 +71,7 @@ List<String> expired = [
   TextEditingController _kategoriController = TextEditingController();
   TextEditingController _lokasiController = TextEditingController();
   TextEditingController _expiredController = TextEditingController();
+  TextEditingController _picturePostController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -278,6 +279,7 @@ List<String> expired = [
                             )),
                           ),
                           onTap: () {
+                            print(_kategoriController.text);
                             if(_namaBarangController.text.isNotEmpty && _deskripsiBarangController.text.isNotEmpty)
                             {
                               buatPostBaru();

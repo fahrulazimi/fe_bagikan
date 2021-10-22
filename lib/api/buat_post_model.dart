@@ -19,7 +19,8 @@ class BuatPost {
     return BuatPost(message: object["message"]);
   }
 
-  static Future<BuatPost>buatPost(String token, String title, String description) async {
+
+  static Future<BuatPost>buatPost(String token, String title, String description, String location, String category, String expired, String picturePost) async {
     String apiUrlBuatPost = "http://192.168.100.46:8000/api/post/create";
     String token = await getToken();
 
@@ -27,6 +28,11 @@ class BuatPost {
     body: {
       "title": title, 
       "description": description,
+      "location" : location,
+      "category" : category,
+      "expired" : expired,
+      "picturePost" : picturePost,
+
       },
       headers: {
       'Authorization': "Bearer $token"},

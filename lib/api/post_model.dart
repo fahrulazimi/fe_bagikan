@@ -43,3 +43,23 @@ class LoginResult {
     return LoginResult.createLoginResult(jsonObject);
   }
 }
+
+class AdminLoginResult {
+  String token;
+
+  AdminLoginResult({this.token});
+
+  factory AdminLoginResult.createAdminLoginResult(Map<String, dynamic> object) {
+    return AdminLoginResult(token: object["token"]);
+  }
+
+  static Future<AdminLoginResult>adminLogin(String username, String password) async {
+    String apiUrlAdminLogin = "http://192.168.100.46:8000/api/login/admin";
+
+    var apiResult = await http.post(apiUrlAdminLogin, 
+    body: {"username": username, "password": password});
+    var jsonObject = json.decode(apiResult.body); 
+
+    return AdminLoginResult.createAdminLoginResult(jsonObject);
+  }
+}
