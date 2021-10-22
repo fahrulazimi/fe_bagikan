@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+
 class PostResult {
   String message;
 
@@ -22,21 +23,22 @@ class PostResult {
   }
 }
 
-class LoginResult {
-  String message;
 
-  LoginResult({this.message});
+class LoginResult {
+  String token;
+
+  LoginResult({this.token});
 
   factory LoginResult.createLoginResult(Map<String, dynamic> object) {
-    return LoginResult(message: object["message"]);
+    return LoginResult(token: object["token"]);
   }
 
   static Future<LoginResult>login(String username, String password) async {
-    String apiUrlLogin = "http://192.168.100.46:8000/api/login/admin";
+    String apiUrlLogin = "http://192.168.100.46:8000/api/login";
 
     var apiResult = await http.post(apiUrlLogin, 
     body: {"username": username, "password": password});
-    var jsonObject = json.decode(apiResult.body);
+    var jsonObject = json.decode(apiResult.body); 
 
     return LoginResult.createLoginResult(jsonObject);
   }

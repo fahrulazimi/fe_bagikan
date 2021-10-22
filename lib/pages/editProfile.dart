@@ -1,7 +1,12 @@
+import 'package:fe_bagikan/api/edit_profile_model.dart';
+import 'package:fe_bagikan/api/user_model.dart';
 import 'package:fe_bagikan/constant/feed_back_json.dart';
 import 'package:fe_bagikan/constant/post_json.dart';
+import 'package:fe_bagikan/pages/profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EditProfilePage extends StatefulWidget {
   @override
@@ -10,17 +15,47 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
 
-  bool _passwordVisible = false;
+  Future<String> getToken() async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getString("token") ?? "";
+  }
+  
+  String token;
+  
 
-  void initState(){
-    _passwordVisible = true;
+  Profile profile;
+  EditProfile editProfile;
+
+
+  @override
+  void editProfileUser() {
+    getToken().then((s){
+      token = s;
+      setState(() {
+        print(token);
+        EditProfile.editProfile(token, _namaUserController.text, _bioUserController.text, _nomorUserController.text, _profilePicture.text).then((value) {
+          editProfile = value;
+          setState(() {
+            print(editProfile);
+            print(editProfile.message);
+            if(editProfile.message == "Successfully updated user!")
+            {
+              Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+              builder: (context) => ProfilePage()), (route)=>false);
+            }
+
+          });
+        });
+      });
+    });
   }
 
   TextEditingController _namaUserController = TextEditingController();
   TextEditingController _bioUserController = TextEditingController();
   TextEditingController _nomorUserController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _profilePicture = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -118,25 +153,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         ),
                       ),
 
-                      //email
-                      Container(
-                        margin: EdgeInsets.only(left: 5),
-                        alignment: Alignment.topLeft,
-                        child: Text("Email", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),)),
-                      Container(
-                        padding: EdgeInsets.only(left: 15),
-                        margin: EdgeInsets.fromLTRB(0, 5, 0, 15),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Color(0xffE1E1E1)),
-                        child: TextFormField(
-                          controller: _emailController,
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Email",
-                              hintStyle: TextStyle(fontSize: 14)),
-                        ),
-                      ),
 
                       //button selesai
                       Container(
@@ -156,7 +172,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             )),
                           ),
                           onTap: () {
-                            
+                            if(_namaUserController.text.isNotEmpty || _bioUserController.text.isNotEmpty || _nomorUserController.text.isNotEmpty || _profilePicture.text.isNotEmpty)
+                            {
+                              editProfileUser();
+                            }
+                            else
+                            {
+                              Alert(
+                              context: context,
+                              title: "Edit Gagal",
+                              desc: "Data masih kosong",
+                              type: AlertType.error,
+                            ).show();
+                              print("Data kosong");
+                            }
                           }
                           )
                           ),

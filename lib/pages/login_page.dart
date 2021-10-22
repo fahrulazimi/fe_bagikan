@@ -1,9 +1,11 @@
 import 'package:fe_bagikan/api/post_model.dart';
+import 'package:fe_bagikan/api/user_model.dart';
 import 'package:fe_bagikan/pages/homepage.dart';
 import 'package:fe_bagikan/pages/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fe_bagikan/helper/layout.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -18,17 +20,27 @@ void initState() {
 
 class _LoginPageState extends State<LoginPage> {
 
+  String token;
   LoginResult loginResult;
 
   final formKey = GlobalKey<FormState>();
 
-  String _email, _password;
-
-  TextEditingController _emailController = TextEditingController();
+  TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
 
   bool _btnEnabled = false;
+
+  void saveData() async
+  {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setString('token', loginResult.token);  
+    
+  }
+  Future<String> getToken() async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getString("token") ?? "";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,11 +85,10 @@ class _LoginPageState extends State<LoginPage> {
                             borderRadius: BorderRadius.circular(15),
                             color: Color(0xffE1E1E1)),
                         child: TextFormField(
-                          controller: _emailController,
-                          onSaved: (input) => _email = input,
+                          controller: _usernameController,
                           decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "Masukkan Email",
+                              hintText: "Masukkan Username",
                               hintStyle: TextStyle(fontSize: 14)),
                         ),
                       ),
@@ -92,7 +103,6 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         child: TextFormField(
                             controller: _passwordController,
-                            onSaved: (input) => _password = input,
                             obscureText: !_passwordVisible,
                             decoration: InputDecoration(
                               border: InputBorder.none,
@@ -130,12 +140,12 @@ class _LoginPageState extends State<LoginPage> {
                     )),
                   ),
                   onTap: () {
-                    if(_emailController.text.isNotEmpty && _passwordController.text.isNotEmpty)
+                    if(_usernameController.text.isNotEmpty && _passwordController.text.isNotEmpty)
                     {
-                      LoginResult.login(_emailController.text, _passwordController.text).then((value) {
+                      LoginResult.login(_usernameController.text, _passwordController.text).then((value) {
                       loginResult = value;
                       setState(() {
-                        if(loginResult == null){
+                        if(loginResult.token == null){
                           Alert(
                           context: context,
                           title: "Login Gagal",
@@ -144,14 +154,18 @@ class _LoginPageState extends State<LoginPage> {
                         ).show();
                           print("Data yang dimasukkan salah");
                         }
-                        else{
-                          print(loginResult.message);
-                          Navigator.pushReplacement(
+                        else {
+                          print(loginResult.token);
+                          saveData();
+                          getToken().then((s){
+                            token = s;
+                            setState(() {});
+                          });
+                          Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Homepage()));
-                        }
-                      });
+                                builder: (context) => Homepage()), (route)=>false);
+                      }});
                     }
                     );        
                     }

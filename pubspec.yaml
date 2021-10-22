@@ -31,6 +31,7 @@ dependencies:
   rflutter_alert: ^2.0.2
   dropdownfield: ^1.0.3
   shared_preferences: ^0.5.3+4
+  image_picker: ^0.6.5
 
 dev_dependencies:
   flutter_test:

@@ -1,7 +1,12 @@
 import 'package:dropdownfield/dropdownfield.dart';
+import 'package:fe_bagikan/api/buat_post_model.dart';
+import 'package:fe_bagikan/api/user_model.dart';
+import 'package:fe_bagikan/pages/homepage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fe_bagikan/helper/layout.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BuatPostPage extends StatefulWidget {
   @override
@@ -9,6 +14,42 @@ class BuatPostPage extends StatefulWidget {
 }
 
 class _BuatPostPageState extends State<BuatPostPage> {
+
+
+Future<String> getToken() async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getString("token") ?? "";
+  }
+  
+  String token;
+  
+
+  Profile profile;
+  BuatPost buatPost;
+
+  @override
+  void buatPostBaru() {
+    getToken().then((s){
+      token = s;
+      setState(() {
+        print(token);
+        BuatPost.buatPost(token, _namaBarangController.text, _deskripsiBarangController.text).then((value) {
+          buatPost = value;
+          setState(() {
+            print(buatPost);
+            print(buatPost.message);
+            if(buatPost.message == "Post stored successfully!")
+            {  
+              Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+              builder: (context) => Homepage()), (route)=>false);
+            }
+            });
+        });
+      });
+    });
+  }
 
 List<String> kategori = [
   "Umum",
@@ -35,7 +76,25 @@ List<String> expired = [
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-      appBar: AppBar(title: Text("buatpost"),),
+      appBar: AppBar(
+        title:Row(
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(right: 10),
+              height: 40.0,
+              width: 40.0,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                image: DecorationImage( 
+                  fit: BoxFit.fill,
+                  image: AssetImage("assets/images/logo.png"),
+                )
+              ),
+            ),
+            Text("Bagikan", style: TextStyle(fontWeight: FontWeight.bold),)
+          ],
+        ),
+        ),
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.all(20),
@@ -219,6 +278,20 @@ List<String> expired = [
                             )),
                           ),
                           onTap: () {
+                            if(_namaBarangController.text.isNotEmpty && _deskripsiBarangController.text.isNotEmpty)
+                            {
+                              buatPostBaru();
+                            }
+                            else
+                            {
+                              Alert(
+                              context: context,
+                              title: "Buat post Gagal",
+                              desc: "Masih ada data yang kosong",
+                              type: AlertType.error,
+                            ).show();
+                              print("Masih ada data kosong");
+                            }
                             
                           }
                           )
