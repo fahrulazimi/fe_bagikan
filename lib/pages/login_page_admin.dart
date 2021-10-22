@@ -63,7 +63,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
               ),
               SizedBox(height: 10),
               Text(
-                "Login Admin Now",
+                "Login as Admin Now",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
               ),
               SizedBox(height: 12),

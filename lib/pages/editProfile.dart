@@ -26,6 +26,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Profile profile;
   EditProfile editProfile;
 
+  @override
+  void initState() {
+    super.initState();
+    getToken().then((s){
+      token = s;
+      setState(() {
+        print(token);
+        Profile.getProfile(token).then((value) {
+          profile = value; 
+          setState(() {
+            print(profile);
+            });
+          });
+      });
+    });
+  }
+
 
   @override
   void editProfileUser() {
@@ -107,8 +124,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           controller: _namaUserController,
                           decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "Nama",
-                              hintStyle: TextStyle(fontSize: 14)),
+                              hintText: (profile!=null)?profile.nama:"Nama",
+                              hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w300)),
                         ),
                       ),
 
@@ -127,8 +144,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           controller: _bioUserController,
                           decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "Bio",
-                              hintStyle: TextStyle(fontSize: 14)),
+                              hintText: (profile!=null)?profile.deskripsi:"Bio",
+                              hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w300)),
                         ),
                       ),
 
@@ -148,8 +165,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           controller: _nomorUserController,
                           decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "Nomor Tlp.",
-                              hintStyle: TextStyle(fontSize: 14)),
+                              hintText: (profile!=null)?profile.phone:"Nomor Tlp.",
+                              hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w300)),
                         ),
                       ),
 
