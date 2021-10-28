@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:fe_bagikan/pages/dashboard_admin/adminDashobard.dart';
+import 'package:fe_bagikan/pages/detailPost.dart';
 import 'package:fe_bagikan/pages/editProfile.dart';
 import 'package:fe_bagikan/pages/homepage.dart';
 import 'package:fe_bagikan/pages/login_page.dart';

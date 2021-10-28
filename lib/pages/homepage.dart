@@ -1,7 +1,10 @@
 
+import 'dart:developer';
+
 import 'package:fe_bagikan/helper/layout.dart';
 import 'package:fe_bagikan/pages/buat_post.dart';
 import 'package:fe_bagikan/pages/profile.dart';
+import 'package:fe_bagikan/pages/timeline.dart';
 import 'package:flutter/material.dart';
 
 class Homepage extends StatefulWidget {
@@ -10,12 +13,6 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  // List<Widget> post = [];
-
-  // _HomepageState(){
-  //   for(int i = 0; i<1;i++)
-  //   post.add(Image(image: image))
-  // }
 
 
   @override
@@ -36,7 +33,7 @@ class _HomepageState extends State<Homepage> {
         body: TabBarView(
           children: <Widget> [
             //homepage
-            Center(child: Text("tab1"),),
+            TimelinePage(),
 
             //search
             Center(child: Text("tab2"),),
