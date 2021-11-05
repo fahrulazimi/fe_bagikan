@@ -9,25 +9,24 @@ Future<String> getToken() async{
     return pref.getString("token");
   }
 
-class Posts {
-  String like;
+class PublicProfilePost {
   String id;
   String title;
   String description;
-  String createdAt;
+  String like;
   String userId;
   String picture;
   String location;
   String category;
   String expired;
-  String username;
-  String profilePicture;
+  String createdAt;
+  String nama;
 
   
-  Posts({this.profilePicture, this.like, this.id, this.title, this.description, this.createdAt, this.userId, this.category, this.expired, this.location, this.picture, this.username});
+  PublicProfilePost({this.like, this.id, this.title, this.description, this.createdAt, this.userId, this.category, this.expired, this.location, this.picture, this.nama});
 
-  factory Posts.createPosts(Map<String, dynamic> object) {
-    return Posts(
+  factory PublicProfilePost.createPublicProfilePost(Map<String, dynamic> object) {
+    return PublicProfilePost(
       like: object["like"].toString(),
       id: object["_id"],
       title: object["title"],
@@ -38,13 +37,12 @@ class Posts {
       location: object["location"],
       picture: object["picture"],
       createdAt: object["created_at"],
-      username: object["username"],
-      profilePicture: object["profilePicture"],
+      nama: object["name"],
       );
   }
 
-  static Future<List<Posts>>getPosts(String token) async {
-    String apiUrl = "http://192.168.100.46:8000/api/posts/read";
+  static Future<List<PublicProfilePost>>getPublicProfilePost(String token, String id) async {
+    String apiUrl = "http://192.168.100.46:8000/api/posts/read_id/$id";
     String token = await getToken();
     
     var apiResult = await http.get(apiUrl, 
@@ -54,9 +52,9 @@ class Posts {
     var jsonObject = json.decode(apiResult.body);
     List<dynamic> listPost = (jsonObject as Map<String, dynamic>)['data'];
 
-    List<Posts> posts = [];
+    List<PublicProfilePost> posts = [];
     for(int i = 0; i < listPost.length; i ++)
-      posts.add(Posts.createPosts(listPost[i]));
+      posts.add(PublicProfilePost.createPublicProfilePost(listPost[i]));
 
     return posts;
   }

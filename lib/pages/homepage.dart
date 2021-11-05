@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:fe_bagikan/helper/layout.dart';
 import 'package:fe_bagikan/pages/buat_post.dart';
 import 'package:fe_bagikan/pages/profile.dart';
+import 'package:fe_bagikan/pages/search_page.dart';
 import 'package:fe_bagikan/pages/timeline.dart';
 import 'package:flutter/material.dart';
 
@@ -36,7 +37,7 @@ class _HomepageState extends State<Homepage> {
             TimelinePage(),
 
             //search
-            Center(child: Text("tab2"),),
+            SearchPage(),
 
             //createPost
             BuatPostPage(),

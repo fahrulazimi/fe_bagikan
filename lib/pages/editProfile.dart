@@ -1,12 +1,21 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:fe_bagikan/api/edit_profile_model.dart';
 import 'package:fe_bagikan/api/user_model.dart';
 import 'package:fe_bagikan/constant/feed_back_json.dart';
 import 'package:fe_bagikan/constant/post_json.dart';
+import 'package:fe_bagikan/pages/homepage.dart';
 import 'package:fe_bagikan/pages/profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dio/dio.dart';
+import 'package:http_parser/http_parser.dart';
 
 class EditProfilePage extends StatefulWidget {
   @override
@@ -20,6 +29,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return pref.getString("token") ?? "";
   }
   
+  File _profilePicture;
+  final picker = ImagePicker();
+
+  Future pickImagePost() async {
+    final image = await picker.getImage(source: ImageSource.gallery);
+    if (image != null) {
+    File cropped = (await ImageCropper.cropImage(
+          sourcePath: image.path,
+          aspectRatio: CropAspectRatio(ratioX: 150, ratioY: 150), 
+          compressQuality: 100,
+          maxWidth: 700,
+          maxHeight: 700,
+          compressFormat: ImageCompressFormat.jpg,
+          androidUiSettings: AndroidUiSettings(
+            toolbarColor: Colors.red,
+            toolbarTitle: "Image Cropper",
+            statusBarColor: Colors.red.shade900,
+            backgroundColor: Colors.white,
+          ))) as File;
+
+      setState(() {
+        _profilePicture = cropped;
+    });}
+  }
+
   String token;
   
 
@@ -45,34 +79,33 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
 
   @override
-  void editProfileUser() {
-    getToken().then((s){
-      token = s;
-      setState(() {
-        print(token);
-        EditProfile.editProfile(token, _namaUserController.text, _bioUserController.text, _nomorUserController.text, _profilePicture.text).then((value) {
-          editProfile = value;
-          setState(() {
-            print(editProfile);
-            print(editProfile.message);
-            if(editProfile.message == "Successfully updated user!")
-            {
-              Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-              builder: (context) => ProfilePage()), (route)=>false);
-            }
+  // void editProfileUser() {
+  //   getToken().then((s){
+  //     token = s;
+  //     setState(() {
+  //       print(token);
+  //       EditProfile.editProfile(token, _namaUserController.text, _bioUserController.text, _nomorUserController.text, _profilePicture.text).then((value) {
+  //         editProfile = value;
+  //         setState(() {
+  //           print(editProfile);
+  //           print(editProfile.message);
+  //           if(editProfile.message == "Successfully updated user!")
+  //           {
+  //             Navigator.pushAndRemoveUntil(
+  //             context,
+  //             MaterialPageRoute(
+  //             builder: (context) => ProfilePage()), (route)=>false);
+  //           }
 
-          });
-        });
-      });
-    });
-  }
+  //         });
+  //       });
+  //     });
+  //   });
+  // }
 
   TextEditingController _namaUserController = TextEditingController();
   TextEditingController _bioUserController = TextEditingController();
   TextEditingController _nomorUserController = TextEditingController();
-  TextEditingController _profilePicture = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -92,8 +125,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         shape: BoxShape.circle,
                         image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: NetworkImage(
-                          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydHJhaXR8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80")
+                          image: (_profilePicture != null) ? FileImage(_profilePicture): ((profile!=null)?NetworkImage("http://192.168.100.46:8000/uploads/profilepicture/"+ profile.profilePicture):NetworkImage("https://nd.net/wp-content/uploads/2016/04/profile-dummy.png"))
                         )
                       ),
                       ),
@@ -101,7 +133,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       GestureDetector(
                         child: Text("Ganti Foto Profile", style: TextStyle(color: Color(0xff1443C3), fontSize: 16, fontWeight: FontWeight.w700),),
                         onTap: (){
-
+                          pickImagePost();
                         },
                       ),
                       SizedBox(height: 20,),
@@ -188,10 +220,51 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w700),
                             )),
                           ),
-                          onTap: () {
-                            if(_namaUserController.text.isNotEmpty || _bioUserController.text.isNotEmpty || _nomorUserController.text.isNotEmpty || _profilePicture.text.isNotEmpty)
+                          onTap: () async {
+                            if(_namaUserController.text.isNotEmpty || _bioUserController.text.isNotEmpty || _nomorUserController.text.isNotEmpty || _profilePicture!= null)
                             {
-                              editProfileUser();
+                              try {
+                                  String token = await getToken();
+                                  Map<String, dynamic> data = {};
+
+                                  if (_profilePicture != null) {
+                                    data["profilePicture"] = await MultipartFile.fromFile(_profilePicture.path, contentType: new MediaType("image", "jpeg"),);
+                                  }
+                                  if (_namaUserController.text.isNotEmpty) {
+                                    data["name"] = await _namaUserController.text;
+                                  }if (_bioUserController.text.isNotEmpty) {
+                                    data["description"] = await _bioUserController.text;
+                                  }if (_nomorUserController.text.isNotEmpty) {
+                                    data["phone"] = await _nomorUserController.text;
+                                  }
+                                  
+                                  Response res = await Dio().post("http://192.168.100.46:8000/api/user/profile/update",
+                                  data: FormData.fromMap(data),
+                                  options: Options(headers: {
+                                    "Authorization" : "Bearer $token",
+                                    
+                                  }),
+                                  onSendProgress: (received, total){
+                                    if(total != -1){
+                                      print((received/total*100).toStringAsFixed(0) + "&");
+                                    }
+                                  },
+                                  );
+                                  print(json.decode(res.toString()));
+                                  print(res.statusCode);
+                                  if(res.statusCode == 201){
+                                    setState(() {
+                                      Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                      builder: (context) => Homepage()), (route)=>false);
+                                    });
+                                    
+                                  }
+                                }
+                                  catch (e){
+                                    print(e);
+                                  }
                             }
                             else
                             {

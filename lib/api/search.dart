@@ -9,25 +9,25 @@ Future<String> getToken() async{
     return pref.getString("token");
   }
 
-class Posts {
-  String like;
+class Search {
   String id;
   String title;
   String description;
-  String createdAt;
+  String like;
+  String username;
   String userId;
   String picture;
+  String profilePicture;
   String location;
+  String createdAt;
   String category;
   String expired;
-  String username;
-  String profilePicture;
-
   
-  Posts({this.profilePicture, this.like, this.id, this.title, this.description, this.createdAt, this.userId, this.category, this.expired, this.location, this.picture, this.username});
+  
+  Search({this.profilePicture, this.like, this.id, this.title, this.description, this.createdAt, this.userId, this.category, this.expired, this.location, this.picture, this.username});
 
-  factory Posts.createPosts(Map<String, dynamic> object) {
-    return Posts(
+  factory Search.createSearch(Map<String, dynamic> object) {
+    return Search(
       like: object["like"].toString(),
       id: object["_id"],
       title: object["title"],
@@ -43,8 +43,8 @@ class Posts {
       );
   }
 
-  static Future<List<Posts>>getPosts(String token) async {
-    String apiUrl = "http://192.168.100.46:8000/api/posts/read";
+  static Future<List<Search>>getSearch(String token, String title, String kategori, String lokasi) async {
+    String apiUrl = "http://192.168.100.46:8000/api/posts/search?title=$title&category=$kategori&location=$lokasi";
     String token = await getToken();
     
     var apiResult = await http.get(apiUrl, 
@@ -54,9 +54,9 @@ class Posts {
     var jsonObject = json.decode(apiResult.body);
     List<dynamic> listPost = (jsonObject as Map<String, dynamic>)['data'];
 
-    List<Posts> posts = [];
+    List<Search> posts = [];
     for(int i = 0; i < listPost.length; i ++)
-      posts.add(Posts.createPosts(listPost[i]));
+      posts.add(Search.createSearch(listPost[i]));
 
     return posts;
   }

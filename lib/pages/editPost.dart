@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:dropdownfield/dropdownfield.dart';
 import 'package:fe_bagikan/api/buat_post_model.dart';
 import 'package:fe_bagikan/api/user_model.dart';
@@ -7,13 +10,23 @@ import 'package:flutter/material.dart';
 import 'package:fe_bagikan/helper/layout.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart'; 
+import 'package:http_parser/http_parser.dart';
 
-class BuatPostPage extends StatefulWidget {
+class EditPostPage extends StatefulWidget {
+  const EditPostPage({
+    Key key,
+    bool isLiked, this.id
+  }) : super(key: key);
+
+  final String id;
+
   @override
-  _BuatPostPageState createState() => _BuatPostPageState();
+  _EditPostPageState createState() => _EditPostPageState();
 }
 
-class _BuatPostPageState extends State<BuatPostPage> {
+class _EditPostPageState extends State<EditPostPage> {
 
 
 Future<String> getToken() async{
@@ -25,31 +38,35 @@ Future<String> getToken() async{
   
 
   Profile profile;
-  BuatPost buatPost;
+  //BuatPost buatPost;
 
-  @override
-  void buatPostBaru() {
-    getToken().then((s){
-      token = s;
+  final picker = ImagePicker();
+  
+  File _picturePost;
+
+  Future pickImagePost() async {
+    final image = await picker.getImage(source: ImageSource.gallery);
+    if (image != null) {
+    File cropped = (await ImageCropper.cropImage(
+          sourcePath: image.path,
+          aspectRatio: CropAspectRatio(ratioX: MediaQuery.of(context).size.width, ratioY: MediaQuery.of(context).size.width * 0.6),
+          compressQuality: 100,
+          maxWidth: 700,
+          maxHeight: 700,
+          compressFormat: ImageCompressFormat.jpg,
+          androidUiSettings: AndroidUiSettings(
+            toolbarColor: Colors.red,
+            toolbarTitle: "Image Cropper",
+            statusBarColor: Colors.red.shade900,
+            backgroundColor: Colors.white,
+          ))) as File;
+
       setState(() {
-        print(token);
-        BuatPost.buatPost(token, _namaBarangController.text, _deskripsiBarangController.text, _lokasiController.text, _kategoriController.text, _expiredController.text, _picturePostController.text).then((value) {
-          buatPost = value;
-          setState(() {
-            print(buatPost);
-            print(buatPost.message);
-            if(buatPost.message == "Post stored successfully!")
-            {  
-              Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-              builder: (context) => Homepage()), (route)=>false);
-            }
-            });
-        });
+        _picturePost = cropped;
       });
-    });
+    }
   }
+
 
 List<String> kategori = [
   "Umum",
@@ -256,7 +273,7 @@ List<String> expired = [
                             )),
                           ),
                           onTap: () {
-                            
+                            pickImagePost();
                           }
                           ),
                         
@@ -278,11 +295,56 @@ List<String> expired = [
                               style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w700),
                             )),
                           ),
-                          onTap: () {
+                          onTap: () async{
                             print(_kategoriController.text);
-                            if(_namaBarangController.text.isNotEmpty && _deskripsiBarangController.text.isNotEmpty)
+                            if(_namaBarangController.text.isNotEmpty || _deskripsiBarangController.text.isNotEmpty || _kategoriController.text.isNotEmpty || _lokasiController.text.isNotEmpty || _expiredController.text.isNotEmpty || _picturePost != null)
                             {
-                              buatPostBaru();
+                              try {
+                                  String token = await getToken();
+                                  Map<String, dynamic> data = {};
+
+                                  if (_picturePost!= null) {
+                                    data["picture"] = await MultipartFile.fromFile(_picturePost.path, contentType: new MediaType("image", "jpeg"),);
+                                  }
+                                  if (_namaBarangController.text.isNotEmpty) {
+                                    data["title"] = await _namaBarangController.text;
+                                  }if (_deskripsiBarangController.text.isNotEmpty) {
+                                    data["description"] = await _deskripsiBarangController.text;
+                                  }if (_kategoriController.text.isNotEmpty) {
+                                    data["category"] = await _kategoriController.text;
+                                  }if (_lokasiController.text.isNotEmpty) {
+                                    data["location"] = await _lokasiController.text;
+                                  }if (_expiredController.text.isNotEmpty) {
+                                    data["expired"] = await _expiredController.text;
+                                  }
+                                  var id = widget.id;
+                                  Response res = await Dio().post("http://192.168.100.46:8000/api/post/update/$id" ,
+                                  data: FormData.fromMap(data),
+                                  options: Options(headers: {
+                                    "Authorization" : "Bearer $token",
+                                    
+                                  }),
+                                  onSendProgress: (received, total){
+                                    if(total != -1){
+                                      print((received/total*100).toStringAsFixed(0) + "&");
+                                    }
+                                  },
+                                  );
+                                  print(json.decode(res.toString()));
+                                  print(res.statusCode);
+                                  if(res.statusCode == 201){
+                                    setState(() {
+                                      Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                      builder: (context) => Homepage()), (route)=>false);
+                                    });
+                                    
+                                  }
+                                }
+                                  catch (e){
+                                    print(e);
+                                  }
                             }
                             else
                             {

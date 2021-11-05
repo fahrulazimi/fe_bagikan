@@ -1,4 +1,5 @@
 import 'package:fe_bagikan/pages/dashboard_admin/adminPost.dart';
+import 'package:fe_bagikan/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fe_bagikan/pages/dashboard_admin/adminUser.dart';
 
@@ -30,7 +31,12 @@ class _AdminPageState extends State<AdminPage> {
                       Icons.logout,
                       size: 25,
                     ),
-                    onPressed: () {}),
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()), (route)=>false);
+                    }),
               ],
             ),
             body: TabBarView(

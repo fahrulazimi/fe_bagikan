@@ -9,42 +9,38 @@ Future<String> getToken() async{
     return pref.getString("token");
   }
 
-class Profile {
+class PublicProfile {
+  String profilePicture;
   String username;
   String email;
-  String deskripsi;
-  String nama;
-  String phone;
-  String profilePicture;
+  String description;
+  String name;
   String id;
   
-  Profile({this.username, this.email, this.deskripsi, this.nama, this.phone, this.profilePicture, this.id});
+  PublicProfile({this.username, this.email, this.profilePicture, this.description, this.name, this.id});
 
-  factory Profile.createProfile(Map<String, dynamic> object) {
-    return Profile(
+  factory PublicProfile.createPublicProfile(Map<String, dynamic> object) {
+    return PublicProfile(
       username: object["username"],
       email: object["email"],
-      deskripsi: object["description"],
-      nama: object["name"],
-      phone: object["phone"],
       profilePicture: object["profilePicture"],
+      description: object["description"],
+      name: object["name"],
       id: object["_id"],
       );
   }
 
-  static Future<Profile>getProfile(String token) async {
-    String apiUrl = "http://192.168.100.46:8000/api/user/profile";
+  static Future<PublicProfile>getPublicProfile(String token, String id) async {
+    String apiUrl = "http://192.168.100.46:8000/api/user/$id";
     String token = await getToken();
     
     var apiResult = await http.get(apiUrl, 
     headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
       'Authorization': "Bearer $token"},
     );
     var jsonObject = json.decode(apiResult.body);
     var userData = (jsonObject as Map<String, dynamic>)["data"];
 
-    return Profile.createProfile(userData);
+    return PublicProfile.createPublicProfile(userData);
   }
 }

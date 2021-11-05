@@ -1,7 +1,10 @@
 import 'dart:developer';
 
+import 'package:fe_bagikan/api/edit_post_model.dart';
+import 'package:fe_bagikan/pages/buat_post.dart';
 import 'package:fe_bagikan/pages/dashboard_admin/adminDashobard.dart';
 import 'package:fe_bagikan/pages/detailPost.dart';
+import 'package:fe_bagikan/pages/editPost.dart';
 import 'package:fe_bagikan/pages/editProfile.dart';
 import 'package:fe_bagikan/pages/homepage.dart';
 import 'package:fe_bagikan/pages/login_page.dart';

@@ -1,5 +1,11 @@
+import 'package:fe_bagikan/api/private_profile_post.dart';
+import 'package:fe_bagikan/api/public_profile_post.dart';
 import 'package:fe_bagikan/api/user_model.dart';
+import 'package:fe_bagikan/helper/layout.dart';
+import 'package:fe_bagikan/pages/detailPost.dart';
 import 'package:fe_bagikan/pages/editProfile.dart';
+import 'package:fe_bagikan/pages/feedback_private_page.dart';
+import 'package:fe_bagikan/pages/login_page.dart';
 import 'package:fe_bagikan/pages/profile2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,9 +24,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
   
   String token;
-  
-
   Profile profile;
+  List<dynamic> listPost = [];
+  PrivateProfilePost privateProfilePost;
 
   @override
   void initState() {
@@ -35,12 +41,19 @@ class _ProfilePageState extends State<ProfilePage> {
             print(profile);
             });
           });
+        PrivateProfilePost.getPrivateProfilePost(token).then((value) {
+          listPost = value;
+          setState(() {
+            print(listPost);
+          });
+        });
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return Scaffold(
         appBar: AppBar(
         title:Row(
@@ -64,8 +77,8 @@ class _ProfilePageState extends State<ProfilePage> {
         endDrawer: Drawer(
           child: ListView(
             children: <Widget>[
-              UserAccountsDrawerHeader(accountName: Text((profile!=null)?profile.nama:""), accountEmail: Text((profile!=null)?profile.email:""),
-              currentAccountPicture: CircleAvatar(backgroundImage: NetworkImage((profile!=null)?profile.profilePicture:""),),
+              UserAccountsDrawerHeader(accountName: Text((profile != null ) ? ((profile.nama != null ) ? profile.nama:"noname") : "noname"), accountEmail: Text(((profile!=null)?profile.email:"")),
+              currentAccountPicture: CircleAvatar(backgroundImage: NetworkImage((profile!=null)?"http://192.168.100.46:8000/uploads/profilepicture/"+profile.profilePicture:"https://nd.net/wp-content/uploads/2016/04/profile-dummy.png"),),
               ),
               ListTile(
                 leading: Icon(Icons.person),
@@ -78,18 +91,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.comment),
-                title: Text("Feedback", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
-                onTap: (){
-                  Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Profile2Page()));
-                },
-              ),
-              ListTile(
                 leading: Icon(Icons.logout),
                 title: Text("Logout", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
+                onTap: (){
+                  Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()), (route)=>false);
+                }
               )
             ],
           ),
@@ -107,70 +116,73 @@ class _ProfilePageState extends State<ProfilePage> {
                       shape: BoxShape.circle,
                       image: DecorationImage(
                         fit: BoxFit.cover,
-                        image: NetworkImage(
-                        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydHJhaXR8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80")
+                        image: (profile!=null)?NetworkImage("http://192.168.100.46:8000/uploads/profilepicture/"+ profile.profilePicture):NetworkImage("https://nd.net/wp-content/uploads/2016/04/profile-dummy.png")
                       )
                     ),
                     ),
                     SizedBox(height: 10,),
-                    Text((profile!=null)?profile.nama:""),
+                    Text((profile != null ) ? ((profile.nama != null ) ? profile.nama:"noname") : "noname"),
                     SizedBox(height: 10,),
-                    Text((profile!=null)?profile.deskripsi:""),
+                    Text((profile != null ) ? ((profile.deskripsi!= null ) ? profile.deskripsi:"Bio") : "Bio"),
+                    SizedBox(height: 10,),
+                    Container(
+                        child:
+                        GestureDetector(
+                          child: Container(
+                            height: 20,
+                            width: 100,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Color(0xff1443C3),
+                            ),
+                            child: Center(
+                                child: Text(
+                              "Feedback",
+                              style: TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.w600),
+                            )),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                              builder: (context) => FeedBackPrivatePage(id: profile.id)));
+                          }
+                          )),
                     SizedBox(height: 10,),
                     Container(height: 1, width: double.infinity ,color: Colors.black,),
                     SizedBox(height: 1,),
-                    Column(
-                          children: <Widget>[
-                            Row(
-                              children: <Widget>[
-                                Container(
-                                  height:  MediaQuery.of(context).size.width /2 ,
-                                  width: MediaQuery.of(context).size.width /2 ,
-                                  padding: EdgeInsets.all(2),
-                                  child: Image(
-                                    image: NetworkImage(
-                                      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydHJhaXR8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80"),
-                                      fit: BoxFit.cover,
-                                  ),
-                                ),
-                                Container(
-                                  height:  MediaQuery.of(context).size.width /2 ,
-                                  width: MediaQuery.of(context).size.width /2 ,
-                                  padding: EdgeInsets.all(2),
-                                  child: Image(
-                                    image: NetworkImage(
-                                      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydHJhaXR8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80"),
-                                      fit: BoxFit.cover,
-                                  ),
-                                )
-                              ],
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Container(
-                                  height:  MediaQuery.of(context).size.width /2 ,
-                                  width: MediaQuery.of(context).size.width /2 ,
-                                  padding: EdgeInsets.all(2),
-                                  child: Image(
-                                    image: NetworkImage(
-                                      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydHJhaXR8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80"),
-                                      fit: BoxFit.cover,
-                                  ),
-                                ),
-                                Container(
-                                  height:  MediaQuery.of(context).size.width /2 ,
-                                  width: MediaQuery.of(context).size.width /2 ,
-                                  padding: EdgeInsets.all(2),
-                                  child: Image(
-                                    image: NetworkImage(
-                                      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydHJhaXR8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80"),
-                                      fit: BoxFit.cover,
-                                  ),
-                                )
-                              ],
-                            )
-                          ],
-                        )
+                    
+                    Container(
+                height: SizeConfig.blockHorizontal*100,
+                width: SizeConfig.blockHorizontal*100,
+                child: GridView.count(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 10,
+                    children: 
+                    List.generate((listPost != [] ? listPost.length : 0), (index) {
+                  if (listPost != []) {
+                    var revesedListPost = List.of(listPost.reversed); 
+                    return GestureDetector(
+                      child: Container(
+                        padding: EdgeInsets.all(2),
+                        child: Image(
+                          image: NetworkImage("http://192.168.100.46:8000/uploads/post/"+revesedListPost[index].picture),
+                          fit: BoxFit.cover,
+                      )),
+                      onTap: (){
+                        setState(() {
+                            Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                            builder: (context) => DetailPostPage(id :revesedListPost[index].id)));
+                            });
+                      },
+                    );
+                  }
+                })
+                ),
+              )
                 ],
                 ),
         ),

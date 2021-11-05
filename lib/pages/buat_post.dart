@@ -1,12 +1,19 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:dropdownfield/dropdownfield.dart';
 import 'package:fe_bagikan/api/buat_post_model.dart';
 import 'package:fe_bagikan/api/user_model.dart';
 import 'package:fe_bagikan/pages/homepage.dart';
+import 'package:fe_bagikan/pages/timeline.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fe_bagikan/helper/layout.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart'; 
+import 'package:http_parser/http_parser.dart';
+import 'package:dio/dio.dart';
 
 class BuatPostPage extends StatefulWidget {
   @override
@@ -20,36 +27,41 @@ Future<String> getToken() async{
     SharedPreferences pref = await SharedPreferences.getInstance();
     return pref.getString("token") ?? "";
   }
-  
+  Dio dio = new Dio();
   String token;
   
 
   Profile profile;
-  BuatPost buatPost;
+  //BuatPost buatPost;
+
+  final picker = ImagePicker();
+  
+  // String _picturePostPath;
+  File _picturePost;
+
+  Future pickImagePost() async {
+    final image = await picker.getImage(source: ImageSource.gallery);
+    if (image != null) {
+    File cropped = (await ImageCropper.cropImage(
+          sourcePath: image.path,
+          aspectRatio: CropAspectRatio(ratioX: MediaQuery.of(context).size.width, ratioY: MediaQuery.of(context).size.width * 0.6),
+          compressQuality: 100,
+          maxWidth: 700,
+          maxHeight: 700,
+          compressFormat: ImageCompressFormat.jpg,
+          androidUiSettings: AndroidUiSettings(
+            toolbarColor: Colors.red,
+            toolbarTitle: "Image Cropper",
+            statusBarColor: Colors.red.shade900,
+            backgroundColor: Colors.white,
+          ))) as File;
+
+      setState(() {
+        _picturePost = cropped;
+    });}
+  }
 
   @override
-  void buatPostBaru() {
-    getToken().then((s){
-      token = s;
-      setState(() {
-        print(token);
-        BuatPost.buatPost(token, _namaBarangController.text, _deskripsiBarangController.text, _lokasiController.text, _kategoriController.text, _expiredController.text, _picturePostController.text).then((value) {
-          buatPost = value;
-          setState(() {
-            print(buatPost);
-            print(buatPost.message);
-            if(buatPost.message == "Post stored successfully!")
-            {  
-              Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-              builder: (context) => Homepage()), (route)=>false);
-            }
-            });
-        });
-      });
-    });
-  }
 
 List<String> kategori = [
   "Umum",
@@ -59,8 +71,11 @@ List<String> kategori = [
 
 List<String> expired = [
   "1 jam",
+  "6 jam",
   "12 jam",
-  "24 jam"
+  "1 hari",
+  "3 hari",
+  "1 minggu",
 ];
 
   String selectedKategori = "";
@@ -220,7 +235,7 @@ List<String> expired = [
                         child: DropDownField(
                           controller: _expiredController,
                           textStyle: TextStyle(fontWeight: FontWeight.normal,fontSize: 14),
-                          hintText: "Expired",
+                          hintText: "Pilih waktu expired",
                           hintStyle: TextStyle(fontSize: 14,fontWeight: FontWeight.normal),
                           enabled: true,
                           itemsVisibleInDropdown: 3,
@@ -256,10 +271,18 @@ List<String> expired = [
                             )),
                           ),
                           onTap: () {
-                            
+                            pickImagePost();
                           }
                           ),
                         
+                        
+                            Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(image: DecorationImage(image: (_picturePost != null) ? FileImage(_picturePost):AssetImage("assets/images/logo.png"))),
+                            //NetworkImage(_picturePost);
+                          ),
+
 
                       //button selesai
                       Container(
@@ -278,11 +301,49 @@ List<String> expired = [
                               style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w700),
                             )),
                           ),
-                          onTap: () {
-                            print(_kategoriController.text);
+                          onTap: () async {
                             if(_namaBarangController.text.isNotEmpty && _deskripsiBarangController.text.isNotEmpty)
                             {
-                              buatPostBaru();
+                              try {
+                                  String token = await getToken();
+                                  Map<String, dynamic> data = {};
+
+                                  if (_picturePost!=null) {
+                                    data["picture"] = await MultipartFile.fromFile(_picturePost.path, contentType: new MediaType("image", "jpeg"),);
+                                    data["title"] = _namaBarangController.text;
+                                    data["description"] = _deskripsiBarangController.text;
+                                    data["location"] = _lokasiController.text;
+                                    data["category"] = _kategoriController.text;
+                                    data["expired"] = _expiredController.text;
+                                  }
+                                  
+                                  Response res = await Dio().post("http://192.168.100.46:8000/api/post/create",
+                                  data: FormData.fromMap(data),
+                                  options: Options(headers: {
+                                    "Authorization" : "Bearer $token",
+                                    
+                                  }),
+                                  onSendProgress: (received, total){
+                                    if(total != -1){
+                                      print((received/total*100).toStringAsFixed(0) + "&");
+                                    }
+                                  },
+                                  );
+                                  print(json.decode(res.toString()));
+                                  print(res.statusCode);
+                                  if(res.statusCode == 201){
+                                    setState(() {
+                                      Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                      builder: (context) => Homepage()), (route)=>false);
+                                    });
+                                    
+                                  }
+                                }
+                                  catch (e){
+                                    print(e);
+                                  }
                             }
                             else
                             {

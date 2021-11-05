@@ -9,7 +9,7 @@ Future<String> getToken() async{
     return pref.getString("token");
   }
 
-class Posts {
+class PostDetail {
   String like;
   String id;
   String title;
@@ -22,29 +22,29 @@ class Posts {
   String expired;
   String username;
   String profilePicture;
-
+  String phone;
   
-  Posts({this.profilePicture, this.like, this.id, this.title, this.description, this.createdAt, this.userId, this.category, this.expired, this.location, this.picture, this.username});
+  PostDetail({this.like, this.id, this.title, this.description,  this.userId, this.category, this.expired, this.location, this.picture, this.createdAt, this.username, this.profilePicture, this.phone});
 
-  factory Posts.createPosts(Map<String, dynamic> object) {
-    return Posts(
-      like: object["like"].toString(),
-      id: object["_id"],
+  factory PostDetail.createPostDetail(Map<String, dynamic> object) {
+    return PostDetail(
       title: object["title"],
       description: object["description"],
+      like: object["like"].toString(),
       userId: object["userId"],
+      picture: object["picture"],
+      location: object["location"],
       category: object["category"],
       expired: object["expired"],
-      location: object["location"],
-      picture: object["picture"],
       createdAt: object["created_at"],
       username: object["username"],
       profilePicture: object["profilePicture"],
+      phone: object["phone"], 
       );
   }
 
-  static Future<List<Posts>>getPosts(String token) async {
-    String apiUrl = "http://192.168.100.46:8000/api/posts/read";
+  static Future<PostDetail>getPostDetail(String token, String id) async {
+    String apiUrl = "http://192.168.100.46:8000/api/post/detail/$id";
     String token = await getToken();
     
     var apiResult = await http.get(apiUrl, 
@@ -52,12 +52,8 @@ class Posts {
       'Authorization': "Bearer $token"},
     );
     var jsonObject = json.decode(apiResult.body);
-    List<dynamic> listPost = (jsonObject as Map<String, dynamic>)['data'];
+    var userData = (jsonObject as Map<String, dynamic>)["data"];
 
-    List<Posts> posts = [];
-    for(int i = 0; i < listPost.length; i ++)
-      posts.add(Posts.createPosts(listPost[i]));
-
-    return posts;
+    return PostDetail.createPostDetail(userData);
   }
 }

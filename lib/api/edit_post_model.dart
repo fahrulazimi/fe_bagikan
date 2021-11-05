@@ -19,16 +19,19 @@ class EditPost {
     return EditPost(message: object["message"]);
   }
 
-  static Future<EditPost>editPost(String token, String nama, String deskripsi, String phone, String profilePicture ) async {
-    String apiUrlEditPost = "http://192.168.100.46:8000/api/post/update";
+  static Future<EditPost>editPost(String token, String id, String title, String description, String location, String picture, String category, String expired ) async {
+    String apiUrlEditPost = "http://192.168.100.46:8000/api/post/update/$id";
     String token = await getToken();
 
     var apiResult = await http.post(apiUrlEditPost, 
     body: {
-      "nama": nama, 
-      "deskripsi": deskripsi,
-      "phone" : phone,
-      "profilePicture" : profilePicture,
+      "title": title, 
+      "description": description,
+      "location" : location,
+      "picture" : picture,
+      "category" : category,
+      "expired" : expired,
+
       },
       headers: {
       'Authorization': "Bearer $token"},
