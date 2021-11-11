@@ -41,7 +41,7 @@ Future<String> getToken() async {
       }
 
       Response res = await Dio().post(
-        "http://192.168.100.46:8000/api/post/create",
+        "https://bagikan-backend.herokuapp.com/api/post/create",
         data: FormData.fromMap(data),
         options: Options(headers: {
           "Authorization": "Bearer $token",

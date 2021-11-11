@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:dropdownfield/dropdownfield.dart';
+//import 'package:dropdownfield/dropdownfield.dart';
 import 'package:fe_bagikan/api/buat_post_model.dart';
+import 'package:fe_bagikan/api/get_post_detail.dart';
 import 'package:fe_bagikan/api/user_model.dart';
 import 'package:fe_bagikan/pages/homepage.dart';
 import 'package:flutter/cupertino.dart';
@@ -67,21 +68,60 @@ Future<String> getToken() async{
     }
   }
 
+  PostDetail postDetail;
 
-List<String> kategori = [
-  "Umum",
-  "Rumah tangga",
-  "Makanan"
+  void initState() {
+    super.initState();
+    getToken().then((s) {
+      token = s;
+      setState(() {
+        print(token);
+        PostDetail.getPostDetail(token, widget.id).then((value) {
+          postDetail = value;
+          setState(() {
+            print(postDetail);
+          });
+        });
+      });
+    });
+  }
+
+
+List<Kategori> kategori = [
+  Kategori("Umum"),
+  Kategori("Rumah tangga"),
+  Kategori("Makanan"),
 ];
 
-List<String> expired = [
-  "1 jam",
-  "12 jam",
-  "24 jam"
+List<DropdownMenuItem> generateItemsKategori(List<Kategori>kategori){
+  List<DropdownMenuItem> itemsKategori = [];
+  for(var itemKategori in kategori){
+    itemsKategori.add(DropdownMenuItem(child: Text(itemKategori.kategoris), value: itemKategori));
+  }
+  return itemsKategori;
+}
+
+List<Expired> expired = [
+  Expired("1 jam"),
+  Expired("6 jam"),
+  Expired("12 jam"),
+  Expired("1 hari"),
+  Expired("3 hari"),
+  Expired("1 minggu"),
 ];
 
-  String selectedKategori = "";
-  String selectedExpired = "";
+List<DropdownMenuItem> generateItemsExpired(List<Expired>expired){
+  List<DropdownMenuItem> itemsExpired = [];
+  for(var itemExpired in expired){
+    itemsExpired.add(DropdownMenuItem(child: Text(itemExpired.expireds), value: itemExpired));
+  }
+  return itemsExpired;
+}
+
+
+  Kategori selectedKategori;
+  Expired selectedExpired;
+
 
   TextEditingController _namaBarangController = TextEditingController();
   TextEditingController _deskripsiBarangController = TextEditingController();
@@ -148,7 +188,7 @@ List<String> expired = [
                           controller: _namaBarangController,
                           decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "Nama Barang",
+                              hintText: (postDetail != null) ? postDetail.title : "Nama Barang",
                               hintStyle: TextStyle(fontSize: 14)),
                         ),
                       ),
@@ -169,7 +209,7 @@ List<String> expired = [
                             controller: _deskripsiBarangController,
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "Deskripsi Barang",
+                              hintText: (postDetail != null) ? postDetail.description: "Deskripsi Barang",
                               hintStyle: TextStyle(fontSize: 14),                              ),
                         ),
                       ),
@@ -180,26 +220,40 @@ List<String> expired = [
                         alignment: Alignment.topLeft,
                         child: Text("Kategori", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),)),
                       Container(
+                        height: 50,
                         margin: EdgeInsets.fromLTRB(0, 5, 0, 15),
+                        padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
                           color: Color(0xffE1E1E1),
                         ),
-                        child: DropDownField(
-                          controller: _kategoriController,
-                          textStyle: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-                          hintText: "Kategori",
-                          hintStyle: TextStyle(fontSize: 14,fontWeight: FontWeight.normal),
-                          enabled: true,
-                          itemsVisibleInDropdown: 3,
-                          items: kategori,
-                          onValueChanged: (value)
-                          {
-                            setState(() {
-                              selectedKategori=value;
-                            });
-                          },
-                        ),
+                        child: DropdownButton(
+                            isExpanded: true,
+                            hint: Text(((postDetail != null) ? postDetail.category : "Kategori") , style: TextStyle(fontSize: 16),),
+                            style: TextStyle(fontSize: 16, color: Colors.black),
+                            value: selectedKategori,
+                            items: generateItemsKategori(kategori), 
+                            onChanged: (itemKategori){
+                              setState(() {
+                                selectedKategori = itemKategori;
+                              });
+                            },
+                          ), 
+                        // DropDownField(
+                        //   controller: _kategoriController,
+                        //   textStyle: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+                        //   hintText: (postDetail != null) ? postDetail.category : "Kategori",
+                        //   hintStyle: TextStyle(fontSize: 14,fontWeight: FontWeight.normal),
+                        //   enabled: true,
+                        //   itemsVisibleInDropdown: 3,
+                        //   items: kategori,
+                        //   onValueChanged: (value)
+                        //   {
+                        //     setState(() {
+                        //       selectedKategori=value;
+                        //     });
+                        //   },
+                        // ),
                       ),
 
                       //lokasi
@@ -218,7 +272,7 @@ List<String> expired = [
                             controller: _lokasiController,
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "Lokasi",
+                              hintText: (postDetail != null) ? postDetail.location : "Lokasi",
                               hintStyle: TextStyle(fontSize: 14),                              ),
                         ),
                       ),
@@ -229,26 +283,41 @@ List<String> expired = [
                         alignment: Alignment.topLeft,
                         child: Text("Expired", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),)),
                       Container(
+                        height: 50,
                         margin: EdgeInsets.fromLTRB(0, 5, 0, 15),
+                        padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
                           color: Color(0xffE1E1E1),
                         ),
-                        child: DropDownField(
-                          controller: _expiredController,
-                          textStyle: TextStyle(fontWeight: FontWeight.normal,fontSize: 14),
-                          hintText: "Expired",
-                          hintStyle: TextStyle(fontSize: 14,fontWeight: FontWeight.normal),
-                          enabled: true,
-                          itemsVisibleInDropdown: 3,
-                          items: expired,
-                          onValueChanged: (value)
-                          {
-                            setState(() {
-                              selectedExpired=value;
-                            });
-                          },
-                        ),
+                        child: DropdownButton(
+                            isExpanded: true,
+                            hint: Text(((postDetail != null) ? postDetail.expired : "Expired") , style: TextStyle(fontSize: 16),),
+                            style: TextStyle(fontSize: 16, color: Colors.black),
+                            value: selectedExpired,
+                            items: generateItemsExpired(expired), 
+                            onChanged: (itemExpired){
+                              setState(() {
+                                selectedExpired = itemExpired;
+                                print(selectedExpired.expireds);
+                              });
+                            },
+                          ), 
+                        // DropDownField(
+                        //   controller: _expiredController,
+                        //   textStyle: TextStyle(fontWeight: FontWeight.normal,fontSize: 14),
+                        //   hintText: (postDetail != null) ? postDetail.expired : "Expired",
+                        //   hintStyle: TextStyle(fontSize: 14,fontWeight: FontWeight.normal),
+                        //   enabled: true,
+                        //   itemsVisibleInDropdown: 3,
+                        //   items: expired,
+                        //   onValueChanged: (value)
+                        //   {
+                        //     setState(() {
+                        //       selectedExpired=value;
+                        //     });
+                        //   },
+                        // ),
                       ),
 
 
@@ -296,8 +365,8 @@ List<String> expired = [
                             )),
                           ),
                           onTap: () async{
-                            print(_kategoriController.text);
-                            if(_namaBarangController.text.isNotEmpty || _deskripsiBarangController.text.isNotEmpty || _kategoriController.text.isNotEmpty || _lokasiController.text.isNotEmpty || _expiredController.text.isNotEmpty || _picturePost != null)
+                            print(selectedKategori.kategoris);
+                            if(_namaBarangController.text.isNotEmpty || _deskripsiBarangController.text.isNotEmpty || selectedKategori !=null || _lokasiController.text.isNotEmpty || selectedExpired != null || _picturePost != null)
                             {
                               try {
                                   String token = await getToken();
@@ -310,15 +379,15 @@ List<String> expired = [
                                     data["title"] = await _namaBarangController.text;
                                   }if (_deskripsiBarangController.text.isNotEmpty) {
                                     data["description"] = await _deskripsiBarangController.text;
-                                  }if (_kategoriController.text.isNotEmpty) {
-                                    data["category"] = await _kategoriController.text;
+                                  }if (selectedKategori.kategoris.isNotEmpty) {
+                                    data["category"] = await selectedKategori.kategoris;
                                   }if (_lokasiController.text.isNotEmpty) {
                                     data["location"] = await _lokasiController.text;
-                                  }if (_expiredController.text.isNotEmpty) {
-                                    data["expired"] = await _expiredController.text;
+                                  }if (selectedExpired.expireds.isNotEmpty) {
+                                    data["expired"] = await selectedExpired.expireds;
                                   }
                                   var id = widget.id;
-                                  Response res = await Dio().post("http://192.168.100.46:8000/api/post/update/$id" ,
+                                  Response res = await Dio().post("https://bagikan-backend.herokuapp.com/api/post/update/$id" ,
                                   data: FormData.fromMap(data),
                                   options: Options(headers: {
                                     "Authorization" : "Bearer $token",
@@ -369,4 +438,14 @@ List<String> expired = [
       ),
     );
   }
+}
+
+class Kategori{
+  String kategoris;
+  Kategori(this.kategoris);
+}
+
+class Expired{
+  String expireds;
+  Expired(this.expireds);
 }

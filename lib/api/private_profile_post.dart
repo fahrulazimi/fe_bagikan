@@ -27,7 +27,7 @@ class PrivateProfilePost {
   }
 
   static Future<List<PrivateProfilePost>>getPrivateProfilePost(String token) async {
-    String apiUrl = "http://192.168.100.46:8000/api/posts/read/profile";
+    String apiUrl = "https://bagikan-backend.herokuapp.com/api/posts/read/profile";
     String token = await getToken();
     
     var apiResult = await http.get(apiUrl, 

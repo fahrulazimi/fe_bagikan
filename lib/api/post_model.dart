@@ -13,7 +13,7 @@ class PostResult {
 
   static Future<PostResult> connectToAPI(
       String username, String email, String password) async {
-    String apiUrlRegister = "http://192.168.100.46:8000/api/register";
+    String apiUrlRegister = "https://bagikan-backend.herokuapp.com/api/register";
 
     var apiResult = await http.post(apiUrlRegister,
         body: {"username": username, "email": email, "password": password});
@@ -34,7 +34,7 @@ class LoginResult {
   }
 
   static Future<LoginResult>login(String username, String password) async {
-    String apiUrlLogin = "http://192.168.100.46:8000/api/login";
+    String apiUrlLogin = "https://bagikan-backend.herokuapp.com/api/login";
 
     var apiResult = await http.post(apiUrlLogin, 
     body: {"username": username, "password": password});

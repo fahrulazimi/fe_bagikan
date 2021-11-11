@@ -33,7 +33,7 @@ class Profile {
   }
 
   static Future<Profile>getProfile(String token) async {
-    String apiUrl = "http://192.168.100.46:8000/api/user/profile";
+    String apiUrl = "https://bagikan-backend.herokuapp.com/api/user/profile";
     String token = await getToken();
     
     var apiResult = await http.get(apiUrl, 

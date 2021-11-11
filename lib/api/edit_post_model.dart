@@ -20,7 +20,7 @@ class EditPost {
   }
 
   static Future<EditPost>editPost(String token, String id, String title, String description, String location, String picture, String category, String expired ) async {
-    String apiUrlEditPost = "http://192.168.100.46:8000/api/post/update/$id";
+    String apiUrlEditPost = "https://bagikan-backend.herokuapp.com/api/post/update/$id";
     String token = await getToken();
 
     var apiResult = await http.post(apiUrlEditPost, 

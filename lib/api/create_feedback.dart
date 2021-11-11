@@ -20,7 +20,7 @@ class BuatFeedback {
   }
 
   static Future<BuatFeedback>buatFeedback(String token, String id, String description ) async {
-    String apiUrlBuatFeedback = "http://192.168.100.46:8000/api/feedback/create/$id";
+    String apiUrlBuatFeedback = "https://bagikan-backend.herokuapp.com/api/feedback/create/$id";
     String token = await getToken();
 
     var apiResult = await http.post(apiUrlBuatFeedback, 

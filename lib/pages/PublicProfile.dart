@@ -112,7 +112,7 @@ class _PublicProfilePageState extends State<PublicProfilePage> {
                     image: DecorationImage(
                         fit: BoxFit.cover,
                         image: NetworkImage(
-                            (publicProfile != null)?"http://192.168.100.46:8000/uploads/profilepicture/"+ publicProfile.profilePicture :"https://nd.net/wp-content/uploads/2016/04/profile-dummy.png"))),
+                            (publicProfile != null)?publicProfile.profilePicture :"https://nd.net/wp-content/uploads/2016/04/profile-dummy.png"))),
               ),
               SizedBox(
                 height: 10,
@@ -183,7 +183,7 @@ class _PublicProfilePageState extends State<PublicProfilePage> {
                       child: Container(
                         padding: EdgeInsets.all(2),
                         child: Image(
-                          image: NetworkImage("http://192.168.100.46:8000/uploads/post/"+listPost[index].picture),
+                          image: NetworkImage(listPost[index].picture),
                           fit: BoxFit.cover,
                       )),
                       onTap: (){

@@ -44,7 +44,7 @@ class Search {
   }
 
   static Future<List<Search>>getSearch(String token, String title, String kategori, String lokasi) async {
-    String apiUrl = "http://192.168.100.46:8000/api/posts/search?title=$title&category=$kategori&location=$lokasi";
+    String apiUrl = "https://bagikan-backend.herokuapp.com/api/posts/search?title=$title&category=$kategori&location=$lokasi";
     String token = await getToken();
     
     var apiResult = await http.get(apiUrl, 

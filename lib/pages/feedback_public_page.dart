@@ -112,9 +112,7 @@ class _FeedBackPublicPageState extends State<FeedBackPublicPage> {
                     image: DecorationImage(
                         fit: BoxFit.cover,
                         image: (publicProfile != null)
-                            ? NetworkImage(
-                                "http://192.168.100.46:8000/uploads/profilepicture/" +
-                                    publicProfile.profilePicture)
+                            ? NetworkImage(publicProfile.profilePicture)
                             : NetworkImage(
                                 "https://nd.net/wp-content/uploads/2016/04/profile-dummy.png"))),
               ),
@@ -199,8 +197,7 @@ class _FeedBackPublicPageState extends State<FeedBackPublicPage> {
                       var formatedTanggal = new DateFormat('yyyy-MM-dd hh:mm:ss').format(dateTime);
                       timeago.setLocaleMessages('id', timeago.IdMessages());
                       return GetFeedback(
-                        profileImg:
-                            "http://192.168.100.46:8000/uploads/profilepicture/"+revesedListFeedback[index].profilePictureSender,
+                        profileImg:revesedListFeedback[index].profilePictureSender,
                         name: revesedListFeedback[index].username,
                         deskripsi: revesedListFeedback[index].description,
                         timeAgo: timeago.format(DateTime.parse(time), locale: 'id'),

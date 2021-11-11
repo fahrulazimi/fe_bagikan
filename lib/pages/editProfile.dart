@@ -10,6 +10,7 @@ import 'package:fe_bagikan/pages/homepage.dart';
 import 'package:fe_bagikan/pages/profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -79,29 +80,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
 
   @override
-  // void editProfileUser() {
-  //   getToken().then((s){
-  //     token = s;
-  //     setState(() {
-  //       print(token);
-  //       EditProfile.editProfile(token, _namaUserController.text, _bioUserController.text, _nomorUserController.text, _profilePicture.text).then((value) {
-  //         editProfile = value;
-  //         setState(() {
-  //           print(editProfile);
-  //           print(editProfile.message);
-  //           if(editProfile.message == "Successfully updated user!")
-  //           {
-  //             Navigator.pushAndRemoveUntil(
-  //             context,
-  //             MaterialPageRoute(
-  //             builder: (context) => ProfilePage()), (route)=>false);
-  //           }
-
-  //         });
-  //       });
-  //     });
-  //   });
-  // }
 
   TextEditingController _namaUserController = TextEditingController();
   TextEditingController _bioUserController = TextEditingController();
@@ -125,7 +103,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         shape: BoxShape.circle,
                         image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: (_profilePicture != null) ? FileImage(_profilePicture): ((profile!=null)?NetworkImage("http://192.168.100.46:8000/uploads/profilepicture/"+ profile.profilePicture):NetworkImage("https://nd.net/wp-content/uploads/2016/04/profile-dummy.png"))
+                          image: (_profilePicture != null) ? FileImage(_profilePicture): ((profile!=null)?NetworkImage(profile.profilePicture):NetworkImage("https://nd.net/wp-content/uploads/2016/04/profile-dummy.png"))
                         )
                       ),
                       ),
@@ -195,6 +173,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             color: Color(0xffE1E1E1)),
                         child: TextFormField(
                           controller: _nomorUserController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                           decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: (profile!=null)?profile.phone:"Nomor Tlp.",
@@ -238,7 +218,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                     data["phone"] = await _nomorUserController.text;
                                   }
                                   
-                                  Response res = await Dio().post("http://192.168.100.46:8000/api/user/profile/update",
+                                  Response res = await Dio().post("https://bagikan-backend.herokuapp.com/api/user/profile/update",
                                   data: FormData.fromMap(data),
                                   options: Options(headers: {
                                     "Authorization" : "Bearer $token",

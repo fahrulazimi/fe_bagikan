@@ -24,7 +24,7 @@ class LikePost {
   }
 
   static Future<LikePost>likePost(String token, String id) async {
-    String apiUrlLikePost = "http://192.168.100.46:8000/api/post/like/$id";
+    String apiUrlLikePost = "https://bagikan-backend.herokuapp.com/api/post/like/$id";
     String token = await getToken();
 
     var apiResult = await http.post(apiUrlLikePost, 
@@ -52,7 +52,7 @@ class DislikePost {
   }
 
   static Future<DislikePost>dislikePost(String token, String id) async {
-    String apiUrlDislikePost = "http://192.168.100.46:8000/api/post/dislike/$id";
+    String apiUrlDislikePost = "https://bagikan-backend.herokuapp.com/api/post/dislike/$id";
     String token = await getToken();
 
     var apiResult = await http.post(apiUrlDislikePost, 
@@ -82,7 +82,7 @@ class GetLike {
   }
 
   static Future<GetLike>getGetLike(String token, String id) async {
-    String apiUrl = "http://192.168.100.46:8000/api/post/getLike/$id";
+    String apiUrl = "https://bagikan-backend.herokuapp.com/api/post/getLike/$id";
     String token = await getToken();
     
     var apiResult = await http.get(apiUrl, 

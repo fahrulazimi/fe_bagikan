@@ -20,7 +20,7 @@ class EditProfile {
   }
 
   static Future<EditProfile>editProfile(String token, String nama, String deskripsi, String phone, String profilePicture ) async {
-    String apiUrlEditProfile = "http://192.168.100.46:8000/api/user/profile/update";
+    String apiUrlEditProfile = "https://bagikan-backend.herokuapp.com/api/user/profile/update";
     String token = await getToken();
 
     var apiResult = await http.post(apiUrlEditProfile, 

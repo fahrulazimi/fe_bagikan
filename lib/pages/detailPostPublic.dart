@@ -134,7 +134,7 @@ class _DetailPostPublicPageState extends State<DetailPostPublicPage> {
                       shape: BoxShape.circle,
                       image: DecorationImage(
                         fit: BoxFit.cover,
-                        image: (postDetail!=null)?NetworkImage("http://192.168.100.46:8000/uploads/profilepicture/"+ postDetail.profilePicture):NetworkImage("https://nd.net/wp-content/uploads/2016/04/profile-dummy.png")
+                        image: (postDetail!=null)?NetworkImage(postDetail.profilePicture):NetworkImage("https://nd.net/wp-content/uploads/2016/04/profile-dummy.png")
                       )
                     ),
                     ),
@@ -147,7 +147,7 @@ class _DetailPostPublicPageState extends State<DetailPostPublicPage> {
                   height: SizeConfig.blockHorizontal * 60,
                   child: Image(
                     image: NetworkImage(
-                      (postDetail!=null)?("http://192.168.100.46:8000/uploads/post/"+ postDetail.picture):"https://nd.net/wp-content/uploads/2016/04/profile-dummy.png"
+                      (postDetail!=null)?(postDetail.picture):"https://nd.net/wp-content/uploads/2016/04/profile-dummy.png"
                       ),
                       fit: BoxFit.cover,
                     ),

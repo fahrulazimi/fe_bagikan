@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:dropdownfield/dropdownfield.dart';
+//import 'package:dropdownfield/dropdownfield.dart';
 import 'package:fe_bagikan/api/buat_post_model.dart';
 import 'package:fe_bagikan/api/user_model.dart';
 import 'package:fe_bagikan/pages/homepage.dart';
@@ -14,6 +14,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart'; 
 import 'package:http_parser/http_parser.dart';
 import 'package:dio/dio.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 
 class BuatPostPage extends StatefulWidget {
   @override
@@ -62,24 +63,56 @@ Future<String> getToken() async{
   }
 
   @override
+  void initState() {
+    super.initState();
+    getToken().then((s){
+      token = s;
+      setState(() {
+        print(token);
+        Profile.getProfile(token).then((value) {
+          profile = value; 
+          setState(() {
+            print(profile.phone);
+            });
+          });
+      });
+    });
+  }
 
-List<String> kategori = [
-  "Umum",
-  "Rumah tangga",
-  "Makanan"
+List<Kategori> kategori = [
+  Kategori("Umum"),
+  Kategori("Rumah tangga"),
+  Kategori("Makanan"),
 ];
 
-List<String> expired = [
-  "1 jam",
-  "6 jam",
-  "12 jam",
-  "1 hari",
-  "3 hari",
-  "1 minggu",
+List<DropdownMenuItem> generateItemsKategori(List<Kategori>kategori){
+  List<DropdownMenuItem> itemsKategori = [];
+  for(var itemKategori in kategori){
+    itemsKategori.add(DropdownMenuItem(child: Text(itemKategori.kategoris), value: itemKategori));
+  }
+  return itemsKategori;
+}
+
+List<Expired> expired = [
+  Expired("1 jam"),
+  Expired("6 jam"),
+  Expired("12 jam"),
+  Expired("1 hari"),
+  Expired("3 hari"),
+  Expired("1 minggu"),
 ];
 
-  String selectedKategori = "";
-  String selectedExpired = "";
+List<DropdownMenuItem> generateItemsExpired(List<Expired>expired){
+  List<DropdownMenuItem> itemsExpired = [];
+  for(var itemExpired in expired){
+    itemsExpired.add(DropdownMenuItem(child: Text(itemExpired.expireds), value: itemExpired));
+  }
+  return itemsExpired;
+}
+
+
+  Kategori selectedKategori;
+  Expired selectedExpired;
 
   TextEditingController _namaBarangController = TextEditingController();
   TextEditingController _deskripsiBarangController = TextEditingController();
@@ -178,26 +211,41 @@ List<String> expired = [
                         alignment: Alignment.topLeft,
                         child: Text("Kategori", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),)),
                       Container(
+                        height: 50,
                         margin: EdgeInsets.fromLTRB(0, 5, 0, 15),
+                        padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
                           color: Color(0xffE1E1E1),
                         ),
-                        child: DropDownField(
-                          controller: _kategoriController,
-                          textStyle: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-                          hintText: "Kategori",
-                          hintStyle: TextStyle(fontSize: 14,fontWeight: FontWeight.normal),
-                          enabled: true,
-                          itemsVisibleInDropdown: 3,
-                          items: kategori,
-                          onValueChanged: (value)
-                          {
-                            setState(() {
-                              selectedKategori=value;
-                            });
-                          },
-                        ),
+                          child: DropdownButton(
+                            isExpanded: true,
+                            hint: Text("Kategori" , style: TextStyle(fontSize: 16),),
+                            style: TextStyle(fontSize: 16, color: Colors.black),
+                            value: selectedKategori,
+                            items: generateItemsKategori(kategori), 
+                            onChanged: (itemKategori){
+                              setState(() {
+                                selectedKategori = itemKategori;
+                              });
+                            },
+                          ),
+
+                        // DropDownField(
+                        //   controller: _kategoriController,
+                        //   textStyle: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+                        //   hintText: "Kategori",
+                        //   hintStyle: TextStyle(fontSize: 14,fontWeight: FontWeight.normal),
+                        //   enabled: true,
+                        //   itemsVisibleInDropdown: 3,
+                        //   items: kategori,
+                        //   onValueChanged: (value)
+                        //   {
+                        //     setState(() {
+                        //       selectedKategori=value;
+                        //     });
+                        //   },
+                        // ),
                       ),
 
                       //lokasi
@@ -227,26 +275,41 @@ List<String> expired = [
                         alignment: Alignment.topLeft,
                         child: Text("Expired", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),)),
                       Container(
+                        height: 50,
                         margin: EdgeInsets.fromLTRB(0, 5, 0, 15),
+                        padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
                           color: Color(0xffE1E1E1),
                         ),
-                        child: DropDownField(
-                          controller: _expiredController,
-                          textStyle: TextStyle(fontWeight: FontWeight.normal,fontSize: 14),
-                          hintText: "Pilih waktu expired",
-                          hintStyle: TextStyle(fontSize: 14,fontWeight: FontWeight.normal),
-                          enabled: true,
-                          itemsVisibleInDropdown: 3,
-                          items: expired,
-                          onValueChanged: (value)
-                          {
-                            setState(() {
-                              selectedExpired=value;
-                            });
-                          },
-                        ),
+                        child: DropdownButton(
+                            isExpanded: true,
+                            hint: Text("Expired" , style: TextStyle(fontSize: 16),),
+                            style: TextStyle(fontSize: 16, color: Colors.black),
+                            value: selectedExpired,
+                            items: generateItemsExpired(expired), 
+                            onChanged: (itemExpired){
+                              setState(() {
+                                selectedExpired = itemExpired;
+                                print(selectedExpired.expireds);
+                              });
+                            },
+                          ),
+                        // DropDownField(
+                        //   controller: _expiredController,
+                        //   textStyle: TextStyle(fontWeight: FontWeight.normal,fontSize: 14),
+                        //   hintText: "Pilih waktu expired",
+                        //   hintStyle: TextStyle(fontSize: 14,fontWeight: FontWeight.normal),
+                        //   enabled: true,
+                        //   itemsVisibleInDropdown: 3,
+                        //   items: expired,
+                        //   onValueChanged: (value)
+                        //   {
+                        //     setState(() {
+                        //       selectedExpired=value;
+                        //     });
+                        //   },
+                        // ),
                       ),
 
 
@@ -277,9 +340,10 @@ List<String> expired = [
                         
                         
                             Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(image: DecorationImage(image: (_picturePost != null) ? FileImage(_picturePost):AssetImage("assets/images/logo.png"))),
+                            margin: EdgeInsets.only(top: 10),
+                            width: 200,
+                            height: 120,
+                            decoration: BoxDecoration(image: DecorationImage(image: (_picturePost != null) ? FileImage(_picturePost):NetworkImage("https://www.sercor.com.tr/wp-content/uploads/2019/04/23103.jpg"),fit: BoxFit.cover,)),
                             //NetworkImage(_picturePost);
                           ),
 
@@ -289,7 +353,7 @@ List<String> expired = [
                         child:
                         GestureDetector(
                           child: Container(
-                            margin: EdgeInsets.only(top: 30),
+                            margin: EdgeInsets.only(top: 20),
                             height: 46,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(25),
@@ -302,56 +366,130 @@ List<String> expired = [
                             )),
                           ),
                           onTap: () async {
-                            if(_namaBarangController.text.isNotEmpty && _deskripsiBarangController.text.isNotEmpty)
+                            if(_namaBarangController.text.isNotEmpty && _deskripsiBarangController.text.isNotEmpty && selectedKategori != null && _lokasiController.text.isNotEmpty && selectedExpired != null && _picturePost != null)
                             {
-                              try {
-                                  String token = await getToken();
-                                  Map<String, dynamic> data = {};
-
-                                  if (_picturePost!=null) {
-                                    data["picture"] = await MultipartFile.fromFile(_picturePost.path, contentType: new MediaType("image", "jpeg"),);
-                                    data["title"] = _namaBarangController.text;
-                                    data["description"] = _deskripsiBarangController.text;
-                                    data["location"] = _lokasiController.text;
-                                    data["category"] = _kategoriController.text;
-                                    data["expired"] = _expiredController.text;
-                                  }
-                                  
-                                  Response res = await Dio().post("http://192.168.100.46:8000/api/post/create",
-                                  data: FormData.fromMap(data),
-                                  options: Options(headers: {
-                                    "Authorization" : "Bearer $token",
-                                    
-                                  }),
-                                  onSendProgress: (received, total){
-                                    if(total != -1){
-                                      print((received/total*100).toStringAsFixed(0) + "&");
+                                if (profile.phone != null) {
+                                  if (selectedKategori.kategoris == "Umum" || selectedKategori.kategoris == "Rumah tangga" || selectedKategori.kategoris  == "Makanan") {
+                                      if (selectedExpired.expireds == "1 jam" || selectedExpired.expireds == "6 jam" ||selectedExpired.expireds == "12 jam" ||selectedExpired.expireds == "1 hari" ||selectedExpired.expireds == "3 hari" ||selectedExpired.expireds == "1 minggu") {
+                                        try {
+                                            String token = await getToken();
+                                            Map<String, dynamic> data = {};
+                                        
+                                            if (_picturePost!=null) {
+                                              data["picture"] = await MultipartFile.fromFile(_picturePost.path, contentType: new MediaType("image", "jpeg"),);
+                                              data["title"] = _namaBarangController.text;
+                                              data["description"] = _deskripsiBarangController.text;
+                                              data["location"] = _lokasiController.text;
+                                              data["category"] = selectedKategori.kategoris;
+                                              data["expired"] = selectedExpired.expireds;
+                                            }
+                                            
+                                            Response res = await Dio().post("https://bagikan-backend.herokuapp.com/api/post/create",
+                                            data: FormData.fromMap(data),
+                                            options: Options(headers: {
+                                              "Authorization" : "Bearer $token",
+                                              
+                                            }),
+                                            onSendProgress: (received, total){
+                                              if(total != -1){
+                                                print((received/total*100).toStringAsFixed(0) + "&");
+                                              }
+                                            },
+                                            );
+                                            print(json.decode(res.toString()));
+                                            print(res.statusCode);
+                                            if(res.statusCode == 201){
+                                              setState(() {
+                                                Navigator.pushAndRemoveUntil(
+                                                context,
+                                                MaterialPageRoute(
+                                                builder: (context) => Homepage()), (route)=>false);
+                                              });
+                                              
+                                            }
+                                          }
+                                            catch (e){
+                                              print(e);
+                                            }
+                                      }
+                                      else{
+                                        Alert(
+                                          context: context,
+                                          title: "Bust Post Gagal",
+                                          desc:"Expired yang dimasukkan tidak sesuai",
+                                          type: AlertType.error,
+                                          buttons: [
+                                            DialogButton(
+                                              child: Text(
+                                                "OK",
+                                                style: TextStyle(
+                                                    color: Colors.white, fontSize: 20),
+                                              ),
+                                              onPressed: () => Navigator.of(context).pop(),
+                                              width: 120,
+                                            )
+                                          ],
+                                        ).show();
+                                      }
                                     }
-                                  },
-                                  );
-                                  print(json.decode(res.toString()));
-                                  print(res.statusCode);
-                                  if(res.statusCode == 201){
-                                    setState(() {
-                                      Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                      builder: (context) => Homepage()), (route)=>false);
-                                    });
-                                    
-                                  }
+                                  else{
+                                    Alert(
+                                  context: context,
+                                  title: "Bust Post Gagal",
+                                  desc:"Kategori yang dimasukkan tidak sesuai",
+                                  type: AlertType.error,
+                                  buttons: [
+                                    DialogButton(
+                                      child: Text(
+                                        "OK",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
+                                      onPressed: () => Navigator.of(context).pop(),
+                                      width: 120,
+                                    )
+                                  ],
+                                ).show();
                                 }
-                                  catch (e){
-                                    print(e);
-                                  }
+                                }
+                                else{
+                                  Alert(
+                                context: context,
+                                title: "Bust Post Gagal",
+                                desc:"Harap tambahkan nomor telepon pada profile",
+                                type: AlertType.error,
+                                buttons: [
+                                  DialogButton(
+                                    child: Text(
+                                      "OK",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 20),
+                                    ),
+                                    onPressed: () => Navigator.of(context).pop(),
+                                    width: 120,
+                                  )
+                                ],
+                              ).show();
+                              }
                             }
                             else
                             {
                               Alert(
                               context: context,
-                              title: "Buat post Gagal",
-                              desc: "Masih ada data yang kosong",
+                              title: "Bust Post Gagal",
+                              desc:"Masih ada data yang kosong",
                               type: AlertType.error,
+                              buttons: [
+                                DialogButton(
+                                  child: Text(
+                                    "OK",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 20),
+                                  ),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  width: 120,
+                                )
+                              ],
                             ).show();
                               print("Masih ada data kosong");
                             }
@@ -368,4 +506,14 @@ List<String> expired = [
       ),
     );
   }
+}
+
+class Kategori{
+  String kategoris;
+  Kategori(this.kategoris);
+}
+
+class Expired{
+  String expireds;
+  Expired(this.expireds);
 }

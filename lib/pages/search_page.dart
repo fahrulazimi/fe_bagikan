@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:dropdownfield/dropdownfield.dart';
+//import 'package:dropdownfield/dropdownfield.dart';
 import 'package:fe_bagikan/api/buat_post_model.dart';
 import 'package:fe_bagikan/api/like_post.dart';
 import 'package:fe_bagikan/api/search.dart';
@@ -58,18 +58,23 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   @override
-  List<String> kategori = ["Umum", "Rumah tangga", "Makanan"];
+  
+  List<Kategori> kategori = [
+  Kategori("Umum"),
+  Kategori("Rumah tangga"),
+  Kategori("Makanan"),
+];
 
-  List<String> expired = [
-    "1 jam",
-    "6 jam",
-    "12 jam",
-    "1 hari",
-    "3 hari",
-    "1 minggu",
-  ];
+List<DropdownMenuItem> generateItemsKategori(List<Kategori>kategori){
+  List<DropdownMenuItem> itemsKategori = [];
+  for(var itemKategori in kategori){
+    itemsKategori.add(DropdownMenuItem(child: Text(itemKategori.kategoris), value: itemKategori));
+  }
+  return itemsKategori;
+}
 
-  String selectedKategori = "";
+  Kategori selectedKategori;
+
   TextEditingController _namaBarangController = TextEditingController();
   TextEditingController _deskripsiBarangController = TextEditingController();
   TextEditingController _kategoriController = TextEditingController();
@@ -156,34 +161,49 @@ class _SearchPageState extends State<SearchPage> {
                               setState(() {
                                 if (_kategoriIsON) {
                                   kategoriWidget = Container(
+                                    height: 50,
+                                    padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
                                     margin: EdgeInsets.fromLTRB(20, 5, 20, 15),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(15),
                                       color: Color(0xffE1E1E1),
                                     ),
-                                    child: DropDownField(
-                                      controller: _kategoriController,
-                                      textStyle: TextStyle(
-                                          fontWeight: FontWeight.normal,
-                                          fontSize: 14),
-                                      hintText: "Pilih kategori",
-                                      hintStyle: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal),
-                                      enabled: true,
-                                      itemsVisibleInDropdown: 3,
-                                      items: kategori,
-                                      onValueChanged: (value) {
-                                        setState(() {
-                                          selectedKategori = value;
-                                        });
-                                      },
-                                    ),
+                                    child: DropdownButton(
+                                    isExpanded: true,
+                                    hint: Text("Kategori" , style: TextStyle(fontSize: 16),),
+                                    style: TextStyle(fontSize: 16, color: Colors.black),
+                                    value: selectedKategori,
+                                    items: generateItemsKategori(kategori), 
+                                    onChanged: (itemKategori){
+                                      setState(() {
+                                        selectedKategori = itemKategori;
+                                      });
+                                    },
+                                  ),
+                                    // DropDownField(
+                                    //   controller: _kategoriController,
+                                    //   textStyle: TextStyle(
+                                    //       fontWeight: FontWeight.normal,
+                                    //       fontSize: 14),
+                                    //   hintText: "Pilih kategori",
+                                    //   hintStyle: TextStyle(
+                                    //       fontSize: 14,
+                                    //       fontWeight: FontWeight.normal),
+                                    //   enabled: true,
+                                    //   itemsVisibleInDropdown: 3,
+                                    //   items: kategori,
+                                    //   onValueChanged: (value) {
+                                    //     setState(() {
+                                    //       selectedKategori = value;
+                                    //     });
+                                    //   },
+                                    // ),
                                   );
                                 } else {
                                   kategoriWidget = SizedBox(
                                     height: 1,
                                   );
+                                  selectedKategori.kategoris = "";
                                 }
                               });
                             })
@@ -230,6 +250,7 @@ class _SearchPageState extends State<SearchPage> {
                                   lokasiWidget = SizedBox(
                                     height: 1,
                                   );
+                                  _lokasiController.text="";
                                 }
                               });
                             })
@@ -270,7 +291,7 @@ class _SearchPageState extends State<SearchPage> {
                             Search.getSearch(
                                     token,
                                     _namaBarangController.text,
-                                    _kategoriController.text,
+                                    selectedKategori.kategoris,
                                     _lokasiController.text)
                                 .then((posts) {
                               listPost = posts;
@@ -302,11 +323,9 @@ class _SearchPageState extends State<SearchPage> {
                               name: revesedListPost[index].username,
                               title: revesedListPost[index].title,
                               profileImg:
-                                  "http://192.168.100.46:8000/uploads/profilepicture/" +
-                                      revesedListPost[index].profilePicture,
+                                  revesedListPost[index].profilePicture,
                               postImg:
-                                  "http://192.168.100.46:8000/uploads/post/" +
-                                      revesedListPost[index].picture,
+                                  revesedListPost[index].picture,
                               deskripsi: revesedListPost[index].description,
                               timeAgo: timeago.format(DateTime.parse(time),
                                   locale: 'id'),
@@ -316,6 +335,10 @@ class _SearchPageState extends State<SearchPage> {
                               id: revesedListPost[index].id,
                               token: token,
                             );
+                          }
+                          else{
+                              return NoPost();
+                            
                           }
                         }),
                       ),
@@ -327,6 +350,21 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class NoPost extends StatelessWidget {
+  const NoPost({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Text("Tidak ada post yang sesuai"),
+      ],
     );
   }
 }
@@ -471,4 +509,11 @@ class _TimelinePostsState extends State<TimelinePosts> {
       ],
     );
   }
+}
+
+
+
+class Kategori{
+  String kategoris;
+  Kategori(this.kategoris);
 }

@@ -92,10 +92,8 @@ class _TimelinePageState extends State<TimelinePage> {
                   return TimelinePosts(
                     name: revesedListPost[index].username,
                     title: revesedListPost[index].title,
-                    profileImg: "http://192.168.100.46:8000/uploads/profilepicture/" +
-                        revesedListPost[index].profilePicture,
-                    postImg: "http://192.168.100.46:8000/uploads/post/" +
-                        revesedListPost[index].picture,
+                    profileImg: revesedListPost[index].profilePicture,
+                    postImg: revesedListPost[index].picture,
                     deskripsi: revesedListPost[index].description,
                     timeAgo: timeago.format(DateTime.parse(time), locale: 'id'),
                     lokasi: revesedListPost[index].location,

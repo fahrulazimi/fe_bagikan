@@ -2,6 +2,7 @@ import 'package:fe_bagikan/api/post_model.dart';
 import 'package:fe_bagikan/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fe_bagikan/helper/layout.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -148,15 +149,76 @@ class _RegisterPageState extends State<RegisterPage> {
                     {
                       PostResult.connectToAPI(_usernameController.text, _emailController.text, _passwordController.text).then((input) {
                       postResult = input;
+                      setState(() {
+                        print("register");
+                        if(postResult.message != "User stored successfully!")
+                        {
+                          Alert(
+                              context: context,
+                              title: "Register Gagal",
+                              desc:
+                                  "username atau email sudah digunakan",
+                              type: AlertType.error,
+                              buttons: [
+                                DialogButton(
+                                  child: Text(
+                                    "OK",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 20),
+                                  ),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  width: 120,
+                                )
+                              ],
+                            ).show();
+                        }
+                        else{
+                          Alert(
+                              context: context,
+                              title: "Register Berhasil",
+                              type: AlertType.success,
+                              buttons: [
+                                DialogButton(
+                                  child: Text(
+                                    "OK",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 20),
+                                  ),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  width: 120,
+                                )
+                              ],
+                            ).show();
+                          Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoginPage()),
+                                (route) => false);
+                        }
+                      });
                     }
                     );
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => LoginPage()));
                     }
                     else{
                       print(Text("data masih ada yang kosong"));
+                      Alert(
+                              context: context,
+                              title: "Register Gagal",
+                              desc:
+                                  "Masih ada data yang belum diisi",
+                              type: AlertType.error,
+                              buttons: [
+                                DialogButton(
+                                  child: Text(
+                                    "OK",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 20),
+                                  ),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  width: 120,
+                                )
+                              ],
+                            ).show();
                     }
                   }),
               SizedBox(height: 15),

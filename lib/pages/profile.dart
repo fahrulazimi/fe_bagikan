@@ -78,7 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
           child: ListView(
             children: <Widget>[
               UserAccountsDrawerHeader(accountName: Text((profile != null ) ? ((profile.nama != null ) ? profile.nama:"noname") : "noname"), accountEmail: Text(((profile!=null)?profile.email:"")),
-              currentAccountPicture: CircleAvatar(backgroundImage: NetworkImage((profile!=null)?"http://192.168.100.46:8000/uploads/profilepicture/"+profile.profilePicture:"https://nd.net/wp-content/uploads/2016/04/profile-dummy.png"),),
+              currentAccountPicture: CircleAvatar(backgroundImage: NetworkImage((profile!=null)?profile.profilePicture:"https://nd.net/wp-content/uploads/2016/04/profile-dummy.png"),),
               ),
               ListTile(
                 leading: Icon(Icons.person),
@@ -116,7 +116,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       shape: BoxShape.circle,
                       image: DecorationImage(
                         fit: BoxFit.cover,
-                        image: (profile!=null)?NetworkImage("http://192.168.100.46:8000/uploads/profilepicture/"+ profile.profilePicture):NetworkImage("https://nd.net/wp-content/uploads/2016/04/profile-dummy.png")
+                        image: (profile!=null)?NetworkImage(profile.profilePicture):NetworkImage("https://nd.net/wp-content/uploads/2016/04/profile-dummy.png")
                       )
                     ),
                     ),
@@ -167,7 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Container(
                         padding: EdgeInsets.all(2),
                         child: Image(
-                          image: NetworkImage("http://192.168.100.46:8000/uploads/post/"+revesedListPost[index].picture),
+                          image: NetworkImage(revesedListPost[index].picture),
                           fit: BoxFit.cover,
                       )),
                       onTap: (){

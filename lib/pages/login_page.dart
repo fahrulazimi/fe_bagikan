@@ -20,7 +20,6 @@ void initState() {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   String token;
   LoginResult loginResult;
 
@@ -29,16 +28,14 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
-
   bool _btnEnabled = false;
 
-  void saveData() async
-  {
+  void saveData() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setString('token', loginResult.token);  
-    
+    pref.setString('token', loginResult.token);
   }
-  Future<String> getToken() async{
+
+  Future<String> getToken() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     return pref.getString("token") ?? "";
   }
@@ -137,43 +134,58 @@ class _LoginPageState extends State<LoginPage> {
                     child: Center(
                         child: Text(
                       "Login",
-                      style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w700),
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700),
                     )),
                   ),
                   onTap: () {
-                    if(_usernameController.text.isNotEmpty && _passwordController.text.isNotEmpty)
-                    {
-                      LoginResult.login(_usernameController.text, _passwordController.text).then((value) {
-                      loginResult = value;
-                      setState(() {
-                        if(loginResult.token == null){
-                          Alert(
-                          context: context,
-                          title: "Login Gagal",
-                          desc: "Email atau password yang anda masukkan salah",
-                          type: AlertType.error,
-                        ).show();
-                          print("Data yang dimasukkan salah");
-                        }
-                        else {
-                          print(loginResult.token);
-                          saveData();
-                          getToken().then((s){
-                            token = s;
-                            setState(() {});
-                          });
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Homepage()), (route)=>false);
-                      }});
-                    }
-                    );        
-                    }
-                    else{
+                    if (_usernameController.text.isNotEmpty &&
+                        _passwordController.text.isNotEmpty) {
+                      LoginResult.login(_usernameController.text,
+                              _passwordController.text)
+                          .then((value) {
+                        loginResult = value;
+                        setState(() {
+                          if (loginResult.token == null) {
+                            Alert(
+                              context: context,
+                              title: "Login Gagal",
+                              desc:
+                                  "Email atau password yang anda masukkan salah",
+                              type: AlertType.error,
+                              buttons: [
+                                DialogButton(
+                                  child: Text(
+                                    "OK",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 20),
+                                  ),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  width: 120,
+                                )
+                              ],
+                            ).show();
+                            print("Data yang dimasukkan salah");
+                          } else {
+                            print(loginResult.token);
+                            saveData();
+                            getToken().then((s) {
+                              token = s;
+                              setState(() {});
+                            });
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Homepage()),
+                                (route) => false);
+                          }
+                        });
+                      });
+                    } else {
                       print(Text("data masih ada yang kosong"));
                     }
-                    
                   }),
               SizedBox(height: 15),
               Row(
@@ -190,9 +202,9 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     onTap: () {
                       Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => RegisterPage()));
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RegisterPage()));
                     },
                   ),
                 ],
@@ -212,9 +224,9 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     onTap: () {
                       Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AdminLoginPage()));
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AdminLoginPage()));
                     },
                   ),
                 ],

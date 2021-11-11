@@ -114,8 +114,7 @@ class _DetailPostPageState extends State<DetailPostPage> {
                           image: DecorationImage(
                               fit: BoxFit.cover,
                               image: NetworkImage((postDetail != null)
-                                  ? ("http://192.168.100.46:8000/uploads/profilepicture/" +
-                                      postDetail.profilePicture)
+                                  ? (postDetail.profilePicture)
                                   : ("https://nd.net/wp-content/uploads/2016/04/profile-dummy.png")))),
                     ),
                     Text(
@@ -144,8 +143,7 @@ class _DetailPostPageState extends State<DetailPostPage> {
                   height: SizeConfig.blockHorizontal * 60,
                   child: Image(
                     image: NetworkImage((postDetail != null)
-                        ? ("http://192.168.100.46:8000/uploads/post/" +
-                            postDetail.picture)
+                        ? (postDetail.picture)
                         : "https://nd.net/wp-content/uploads/2016/04/profile-dummy.png"),
                     fit: BoxFit.cover,
                   ),

@@ -31,7 +31,7 @@ class PublicProfile {
   }
 
   static Future<PublicProfile>getPublicProfile(String token, String id) async {
-    String apiUrl = "http://192.168.100.46:8000/api/user/$id";
+    String apiUrl = "https://bagikan-backend.herokuapp.com/api/user/$id";
     String token = await getToken();
     
     var apiResult = await http.get(apiUrl, 

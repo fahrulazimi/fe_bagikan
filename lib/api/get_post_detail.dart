@@ -44,7 +44,7 @@ class PostDetail {
   }
 
   static Future<PostDetail>getPostDetail(String token, String id) async {
-    String apiUrl = "http://192.168.100.46:8000/api/post/detail/$id";
+    String apiUrl = "https://bagikan-backend.herokuapp.com/api/post/detail/$id";
     String token = await getToken();
     
     var apiResult = await http.get(apiUrl, 
