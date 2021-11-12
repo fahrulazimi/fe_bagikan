@@ -31,7 +31,7 @@ class FeedBackPublicPage extends StatefulWidget {
 class _FeedBackPublicPageState extends State<FeedBackPublicPage> {
   Future<String> getToken() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getString("token") ?? "";
+    return pref.getString("token");
   }
 
   String token;
@@ -49,27 +49,32 @@ class _FeedBackPublicPageState extends State<FeedBackPublicPage> {
     super.initState();
     getToken().then((s) {
       token = s;
-      setState(() {
         print(token);
         PublicProfile.getPublicProfile(token, widget.id).then((value) {
           publicProfile = value;
-          setState(() {
-            print(publicProfile);
-          });
+          if (mounted) {
+            setState(() {
+              print(publicProfile);
+            });
+          }
         });
         PrivateProfilePost.getPrivateProfilePost(token).then((value) {
           listPost = value;
-          setState(() {
-            print(listPost);
-          });
+          if (mounted) {
+            setState(() {
+              print(listPost);
+            });
+          }
         });
         FeedBackPrivate.getFeedBackPrivate(token, widget.id).then((value) {
           listFeedBack = value;
-          setState(() {
-            print(listFeedBack);
-          });
+          if (mounted) {
+            setState(() {
+              print(listFeedBack);
+            });
+          }
         });
-      });
+      if(mounted){setState(() {});}
     });
   }
 
@@ -161,11 +166,11 @@ class _FeedBackPublicPageState extends State<FeedBackPublicPage> {
                               color: Colors.grey,
                             ),
                             onPressed: () {
-                              setState(() {
                                 BuatFeedback.buatFeedback(token, widget.id,
                                         _feedBackController.text)
                                     .then((value) {
                                   buatFeedback = value;
+                                  if (mounted) {
                                   setState(() {
                                     print(buatFeedback);
                                     Navigator.pushReplacement(
@@ -173,8 +178,9 @@ class _FeedBackPublicPageState extends State<FeedBackPublicPage> {
                                         MaterialPageRoute(
                                             builder: (context) => FeedBackPublicPage(id: widget.id,)));
                                   });
+                                }
                                 });
-                              });
+                              if(mounted){setState(() {});}
                             },
                           )),
                     ),

@@ -31,7 +31,7 @@ class _PublicProfilePageState extends State<PublicProfilePage> {
   
   Future<String> getToken() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getString("token") ?? "";
+    return pref.getString("token");
   }
 
   String token;
@@ -45,7 +45,6 @@ class _PublicProfilePageState extends State<PublicProfilePage> {
     super.initState();
     getToken().then((s) {
       token = s;
-      setState(() {
         print(token);
         PublicProfile.getPublicProfile(token, widget.id).then((value) {
           publicProfile = value;
@@ -55,19 +54,22 @@ class _PublicProfilePageState extends State<PublicProfilePage> {
         });
         Profile.getProfile(token).then((value) {
           profile = value; 
-          setState(() {
-            print(profile);
-            });
+          if (mounted) {
+            setState(() {
+              print(profile);
+              });
+          }
           });
         PublicProfilePost.getPublicProfilePost(token, widget.id).then((posts) {
           listPost = posts;
+          if (mounted) {
           setState(() {
             print(posts.length);
             print(listPost);
-            print(listPost[0].title);
           });
+        }
         });
-      });
+      if(mounted){setState(() {});}
     });
   }
 

@@ -22,13 +22,11 @@ class _OnBoardingState extends State<OnBoarding> {
               ),
             ),
             bodyWidget: Center(
-              child: Expanded(
-                child: Text(
-                  "Membantu untuk menyumbangkan barang bekas layak pakaimu agar sampai pada orang yang tepat",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                  ),
+              child: Text(
+                "Membantu untuk menyumbangkan barang bekas layak pakaimu agar sampai pada orang yang tepat",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
                 ),
               ),
             ),
@@ -47,13 +45,11 @@ class _OnBoardingState extends State<OnBoarding> {
               ),
             ),
             bodyWidget: Center(
-              child: Expanded(
-                child: Text(
-                  "Membantu untuk mencari barang bekas layak pakai yang kamu butuhkan.",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                  ),
+              child: Text(
+                "Membantu untuk mencari barang bekas layak pakai yang kamu butuhkan.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
                 ),
               ),
             ),
@@ -72,13 +68,11 @@ class _OnBoardingState extends State<OnBoarding> {
               ),
             ),
             bodyWidget: Center(
-              child: Expanded(
-                child: Text(
-                  "Hati-hati terhadap penipuan, selalu waspada saat mencari dan menyumbangkan barang bekasmu",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                  ),
+              child: Text(
+                "Hati-hati terhadap penipuan, selalu waspada saat mencari dan menyumbangkan barang bekasmu",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
                 ),
               ),
             ),

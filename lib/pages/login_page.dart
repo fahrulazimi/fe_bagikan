@@ -147,7 +147,6 @@ class _LoginPageState extends State<LoginPage> {
                               _passwordController.text)
                           .then((value) {
                         loginResult = value;
-                        setState(() {
                           if (loginResult.token == null) {
                             Alert(
                               context: context,
@@ -173,7 +172,9 @@ class _LoginPageState extends State<LoginPage> {
                             saveData();
                             getToken().then((s) {
                               token = s;
-                              setState(() {});
+                              if (mounted) {
+                                setState(() {});
+                              }
                             });
                             Navigator.pushAndRemoveUntil(
                                 context,
@@ -181,11 +182,15 @@ class _LoginPageState extends State<LoginPage> {
                                     builder: (context) => Homepage()),
                                 (route) => false);
                           }
-                        });
-                      });
+                        
+                      }
+                      );
                     } else {
                       print(Text("data masih ada yang kosong"));
                     }
+                    if(mounted){setState(() {
+                      
+                    });}
                   }),
               SizedBox(height: 15),
               Row(

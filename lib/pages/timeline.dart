@@ -19,7 +19,7 @@ class TimelinePage extends StatefulWidget {
 class _TimelinePageState extends State<TimelinePage> {
   Future<String> getToken() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getString("token") ?? "";
+    return pref.getString("token");
   }
 
   String token;
@@ -32,17 +32,20 @@ class _TimelinePageState extends State<TimelinePage> {
     super.initState();
     getToken().then((s) {
       token = s;
-      setState(() {
         print(token);
         Posts.getPosts(token).then((posts) {
           listPost = posts;
-          setState(() {
-            print(posts.length);
-            print(listPost);
-            print(listPost[0].title);
-          });
+          if (mounted) {
+            setState(() {
+              print(posts.length);
+              print(listPost);
+              print(listPost[0].title);
+            });
+          }
         });
-      });
+      if(mounted){setState(() {
+        
+      });}
     });
   }
 
@@ -154,7 +157,6 @@ class _TimelinePostsState extends State<TimelinePosts> {
     GetLike.getGetLike(widget.token, widget.id).then((value) {
       getLike = value;
       print(getLike);
-      setState(() {
         if (getLike != null) {
       if (getLike.statusLike == "true") {
         _isLiked = true;
@@ -162,7 +164,7 @@ class _TimelinePostsState extends State<TimelinePosts> {
     } else {
       _isLiked = false;
     }
-      });
+      if(mounted){setState(() {});}
     });
   }
 

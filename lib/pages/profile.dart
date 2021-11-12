@@ -20,7 +20,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     Future<String> getToken() async{
     SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getString("token") ?? "";
+    return pref.getString("token");
   }
   
   String token;
@@ -33,21 +33,24 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
     getToken().then((s){
       token = s;
-      setState(() {
         print(token);
         Profile.getProfile(token).then((value) {
           profile = value; 
-          setState(() {
-            print(profile);
-            });
+          if (mounted) {
+            setState(() {
+              print(profile);
+              });
+          }
           });
         PrivateProfilePost.getPrivateProfilePost(token).then((value) {
           listPost = value;
+          if (mounted) {
           setState(() {
             print(listPost);
           });
+        }
         });
-      });
+      if(mounted){setState(() {});}
     });
   }
 

@@ -30,7 +30,7 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   Future<String> getToken() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getString("token") ?? "";
+    return pref.getString("token");
   }
 
   String token;
@@ -51,9 +51,11 @@ class _SearchPageState extends State<SearchPage> {
     super.initState();
     getToken().then((s) {
       token = s;
-      setState(() {
-        print(token);
+      if (mounted) {
+        setState(() {
+          print(token);
       });
+      }
     });
   }
 
@@ -158,7 +160,6 @@ List<DropdownMenuItem> generateItemsKategori(List<Kategori>kategori){
                             value: _kategoriIsON,
                             onChanged: (newValue) {
                               _kategoriIsON = newValue;
-                              setState(() {
                                 if (_kategoriIsON) {
                                   kategoriWidget = Container(
                                     height: 50,
@@ -175,37 +176,28 @@ List<DropdownMenuItem> generateItemsKategori(List<Kategori>kategori){
                                     value: selectedKategori,
                                     items: generateItemsKategori(kategori), 
                                     onChanged: (itemKategori){
-                                      setState(() {
-                                        selectedKategori = itemKategori;
-                                      });
+                                      if (mounted) {
+                                        setState(() {
+                                          selectedKategori = itemKategori;
+                                        });
+                                      }
                                     },
                                   ),
-                                    // DropDownField(
-                                    //   controller: _kategoriController,
-                                    //   textStyle: TextStyle(
-                                    //       fontWeight: FontWeight.normal,
-                                    //       fontSize: 14),
-                                    //   hintText: "Pilih kategori",
-                                    //   hintStyle: TextStyle(
-                                    //       fontSize: 14,
-                                    //       fontWeight: FontWeight.normal),
-                                    //   enabled: true,
-                                    //   itemsVisibleInDropdown: 3,
-                                    //   items: kategori,
-                                    //   onValueChanged: (value) {
-                                    //     setState(() {
-                                    //       selectedKategori = value;
-                                    //     });
-                                    //   },
-                                    // ),
                                   );
                                 } else {
                                   kategoriWidget = SizedBox(
                                     height: 1,
                                   );
-                                  selectedKategori.kategoris = "";
+                                  if (mounted) {
+                                        setState(() {
+                                          selectedKategori.kategoris = "";
+                                        });
+                                      }
+                                  
                                 }
-                              });
+                              if(mounted){setState(() {
+                                
+                              });}
                             })
                       ],
                     ),
@@ -288,6 +280,7 @@ List<DropdownMenuItem> generateItemsKategori(List<Kategori>kategori){
                             )),
                           ),
                           onTap: () {
+                            if (selectedKategori!=null) {
                             Search.getSearch(
                                     token,
                                     _namaBarangController.text,
@@ -301,7 +294,24 @@ List<DropdownMenuItem> generateItemsKategori(List<Kategori>kategori){
                                 print(listPost[0].title);
                               });
                             });
-                          })),
+                          }
+                          else{
+                            Search.getSearch(
+                                    token,
+                                    _namaBarangController.text,
+                                    "",
+                                    _lokasiController.text)
+                                .then((posts) {
+                              listPost = posts;
+                              setState(() {
+                                print(posts.length);
+                                print(listPost);
+                                print(listPost[0].title);
+                              });
+                            });
+                          }
+                          }
+                          )),
 
                   Container(
                     width: SizeConfig.blockHorizontal * 100,

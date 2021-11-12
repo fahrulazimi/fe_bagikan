@@ -27,7 +27,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<String> getToken() async{
     SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getString("token") ?? "";
+    return pref.getString("token");
   }
   
   File _profilePicture;
@@ -66,15 +66,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
     super.initState();
     getToken().then((s){
       token = s;
-      setState(() {
         print(token);
         Profile.getProfile(token).then((value) {
           profile = value; 
-          setState(() {
-            print(profile);
-            });
+          if (mounted) {
+            setState(() {
+              print(profile);
+              });
+          }
           });
-      });
+      if(mounted){setState(() {});}
     });
   }
 

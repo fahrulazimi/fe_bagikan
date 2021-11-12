@@ -35,14 +35,15 @@ class _HomepageState extends State<Homepage> {
           children: <Widget> [
             //homepage
             TimelinePage(),
-
             //search
             SearchPage(),
-
+            
             //createPost
             BuatPostPage(),
+            
             //profile
             ProfilePage()
+            
 
           ],
         ),

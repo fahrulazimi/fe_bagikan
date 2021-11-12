@@ -54,7 +54,7 @@ class AdminLoginResult {
   }
 
   static Future<AdminLoginResult>adminLogin(String username, String password) async {
-    String apiUrlAdminLogin = "http://192.168.100.46:8000/api/login/admin";
+    String apiUrlAdminLogin = "https://bagikan-backend.herokuapp.com/api/login/admin";
 
     var apiResult = await http.post(apiUrlAdminLogin, 
     body: {"username": username, "password": password});

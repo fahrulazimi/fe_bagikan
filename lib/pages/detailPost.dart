@@ -29,7 +29,7 @@ class DetailPostPage extends StatefulWidget {
 class _DetailPostPageState extends State<DetailPostPage> {
   Future<String> getToken() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getString("token") ?? "";
+    return pref.getString("token");
   }
 
   String token;
@@ -47,28 +47,31 @@ class _DetailPostPageState extends State<DetailPostPage> {
     super.initState();
     getToken().then((s) {
       token = s;
-      setState(() {
         print(token);
         PostDetail.getPostDetail(token, widget.id).then((value) {
           postDetail = value;
-          setState(() {
-            print(postDetail);
-          });
+          if (mounted) {
+            setState(() {
+              print(postDetail);
+            });
+          }
         });
         GetLike.getGetLike(token, widget.id).then((value) {
           getLike = value;
           print(getLike);
-          setState(() {
-            if (getLike != null) {
-              if (getLike.statusLike == "true") {
-                _isLiked = true;
+          if (mounted) {
+            setState(() {
+              if (getLike != null) {
+                if (getLike.statusLike == "true") {
+                  _isLiked = true;
+                }
+              } else {
+                _isLiked = false;
               }
-            } else {
-              _isLiked = false;
-            }
-          });
+            });
+          }
         });
-      });
+      if(mounted){setState(() {});}
     });
   }
 
@@ -161,38 +164,41 @@ class _DetailPostPageState extends State<DetailPostPage> {
                           size: 30,
                         ),
                         onPressed: () {
-                          setState(() {
                             if (getLike != null) {
                               print(getLike.statusLike);
                               if (getLike.statusLike == "true") {
                                 DislikePost.dislikePost(token, widget.id)
                                     .then((value) {
                                   dislikePost = value;
-                                  setState(() {
-                                    _isLiked = false;
-                                    Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                DetailPostPage(id: widget.id)));
-                                  });
+                                  if (mounted) {
+                                    setState(() {
+                                      _isLiked = false;
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DetailPostPage(id: widget.id)));
+                                    });
+                                  }
                                 });
                               } else if (getLike.statusLike == "false") {
                                 LikePost.likePost(token, widget.id)
                                     .then((value) {
                                   likePost = value;
-                                  setState(() {
-                                    _isLiked = true;
-                                    Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                DetailPostPage(id: widget.id)));
-                                  });
+                                  if (mounted) {
+                                    setState(() {
+                                      _isLiked = true;
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DetailPostPage(id: widget.id)));
+                                    });
+                                  }
                                 });
                               }
                             }
-                          });
+                          if(mounted){setState(() {});}
                         },
                       ),
                     ),

@@ -26,7 +26,7 @@ class _BuatPostPageState extends State<BuatPostPage> {
 
 Future<String> getToken() async{
     SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getString("token") ?? "";
+    return pref.getString("token");
   }
   Dio dio = new Dio();
   String token;
@@ -67,15 +67,16 @@ Future<String> getToken() async{
     super.initState();
     getToken().then((s){
       token = s;
-      setState(() {
         print(token);
         Profile.getProfile(token).then((value) {
           profile = value; 
-          setState(() {
-            print(profile.phone);
-            });
+          if (mounted) {
+            setState(() {
+              print(profile.phone);
+              });
+          }
           });
-      });
+      if(mounted){setState(() {});}
     });
   }
 

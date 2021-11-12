@@ -13,7 +13,7 @@ class _AdminUserState extends State<AdminUser> {
 
   Future<String> getToken() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getString("token") ?? "";
+    return pref.getString("token");
   }
 
   String token;
@@ -25,15 +25,16 @@ class _AdminUserState extends State<AdminUser> {
     super.initState();
     getToken().then((s) {
       token = s;
-      setState(() {
         print(token);
         User.getUser(token).then((value) {
           listUser = value;
-          setState(() {
-            print(listUser);
-          });
+          if (mounted) {
+            setState(() {
+              print(listUser);
+            });
+          }
         });
-      });
+      if(mounted){setState(() {});}
     });
   }
   @override

@@ -32,7 +32,7 @@ class _EditPostPageState extends State<EditPostPage> {
 
 Future<String> getToken() async{
     SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getString("token") ?? "";
+    return pref.getString("token");
   }
   
   String token;
@@ -74,15 +74,16 @@ Future<String> getToken() async{
     super.initState();
     getToken().then((s) {
       token = s;
-      setState(() {
         print(token);
         PostDetail.getPostDetail(token, widget.id).then((value) {
           postDetail = value;
-          setState(() {
-            print(postDetail);
-          });
+          if (mounted) {
+            setState(() {
+              print(postDetail);
+            });
+          }
         });
-      });
+      if(mounted){setState(() {});}
     });
   }
 
@@ -365,7 +366,6 @@ List<DropdownMenuItem> generateItemsExpired(List<Expired>expired){
                             )),
                           ),
                           onTap: () async{
-                            print(selectedKategori.kategoris);
                             if(_namaBarangController.text.isNotEmpty || _deskripsiBarangController.text.isNotEmpty || selectedKategori !=null || _lokasiController.text.isNotEmpty || selectedExpired != null || _picturePost != null)
                             {
                               try {
@@ -379,11 +379,11 @@ List<DropdownMenuItem> generateItemsExpired(List<Expired>expired){
                                     data["title"] = await _namaBarangController.text;
                                   }if (_deskripsiBarangController.text.isNotEmpty) {
                                     data["description"] = await _deskripsiBarangController.text;
-                                  }if (selectedKategori.kategoris.isNotEmpty) {
+                                  }if (selectedKategori != null) {
                                     data["category"] = await selectedKategori.kategoris;
                                   }if (_lokasiController.text.isNotEmpty) {
                                     data["location"] = await _lokasiController.text;
-                                  }if (selectedExpired.expireds.isNotEmpty) {
+                                  }if (selectedExpired != null) {
                                     data["expired"] = await selectedExpired.expireds;
                                   }
                                   var id = widget.id;

@@ -26,7 +26,7 @@ class Post {
   }
 
   static Future<List<Post>>getPost(String token) async {
-    String apiUrl = "http://192.168.100.46:8000/api/posts";
+    String apiUrl = "https://bagikan-backend.herokuapp.com/api/posts";
     String token = await getToken();
     
     var apiResult = await http.get(apiUrl, 

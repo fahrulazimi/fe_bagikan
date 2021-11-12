@@ -147,7 +147,6 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                     {
                       AdminLoginResult.adminLogin(_usernameController.text, _passwordController.text).then((value) {
                       adminLoginResult = value;
-                      setState(() {
                         if(adminLoginResult.token == null){
                           Alert(
                           context: context,
@@ -162,19 +161,24 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                           saveData();
                           getToken().then((s){
                             token = s;
-                            setState(() {});
+                            if (mounted) {
+                              setState(() {});
+                            }
                           });
                           Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => AdminPage()), (route)=>false);
-                      }});
+                      }
                     }
                     );        
                     }
                     else{
                       print(Text("data masih ada yang kosong"));
                     }
+                    if(mounted){setState(() {
+                      
+                    });}
                     
                   }),
               SizedBox(height: 15),

@@ -28,7 +28,7 @@ class FeedBackPrivatePage extends StatefulWidget {
 class _FeedBackPrivatePageState extends State<FeedBackPrivatePage> {
   Future<String> getToken() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getString("token") ?? "";
+    return pref.getString("token");
   }
 
   String token;
@@ -42,28 +42,33 @@ class _FeedBackPrivatePageState extends State<FeedBackPrivatePage> {
     super.initState();
     getToken().then((s) {
       token = s;
-      setState(() {
         print(token);
         Profile.getProfile(token).then((value) {
           profile = value;
+          if (mounted) {
           setState(() {
             print(profile);
           });
+        }
         });
         PrivateProfilePost.getPrivateProfilePost(token).then((value) {
           listPost = value;
-          setState(() {
-            print(listPost);
-          });
+          if (mounted) {
+            setState(() {
+              print(listPost);
+            });
+          }
         });
         FeedBackPrivate.getFeedBackPrivate(token, widget.id).then((value) {
           print(widget.id);
           listFeedBack = value;
-          setState(() {
-            print(listFeedBack);
-          });
+          if (mounted) {
+            setState(() {
+              print(listFeedBack);
+            });
+          }
         });
-      });
+      if(mounted){setState(() {});}
     });
   }
 
@@ -96,7 +101,7 @@ class _FeedBackPrivatePageState extends State<FeedBackPrivatePage> {
         child: ListView(
           children: <Widget>[
             UserAccountsDrawerHeader(
-              accountName: Text((profile != null) ? profile.nama : ""),
+              accountName: Text((profile != null ) ? ((profile.nama != null ) ? profile.nama:"noname") : "noname"),
               accountEmail: Text((profile != null) ? profile.email : ""),
               currentAccountPicture: CircleAvatar(
                 backgroundImage: NetworkImage((profile != null)
@@ -152,11 +157,11 @@ class _FeedBackPrivatePageState extends State<FeedBackPrivatePage> {
               SizedBox(
                 height: 10,
               ),
-              Text((profile != null) ? profile.nama : ""),
+              Text((profile != null ) ? ((profile.nama != null ) ? profile.nama:"noname") : "noname"),
               SizedBox(
                 height: 10,
               ),
-              Text((profile != null) ? profile.deskripsi : ""),
+              Text((profile != null ) ? ((profile.deskripsi!= null ) ? profile.deskripsi:"Bio") : "Bio"),
               SizedBox(
                 height: 10,
               ),

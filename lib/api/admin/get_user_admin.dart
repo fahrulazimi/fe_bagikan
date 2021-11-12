@@ -26,7 +26,7 @@ class User {
   }
 
   static Future<List<User>>getUser(String token) async {
-    String apiUrl = "http://192.168.100.46:8000/api/users";
+    String apiUrl = "https://bagikan-backend.herokuapp.com/api/users";
     String token = await getToken();
     
     var apiResult = await http.get(apiUrl, 
