@@ -125,6 +125,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     SizedBox(height: 10,),
                     Text((profile != null ) ? ((profile.nama != null ) ? profile.nama:"noname") : "noname"),
+                    SizedBox(height: 5,),
+                    Text((profile != null ) ? ((profile.username != null ) ? profile.username:"noname") : "noname", style: TextStyle(fontSize: 11, color: Colors.grey)),
                     SizedBox(height: 10,),
                     Text((profile != null ) ? ((profile.deskripsi!= null ) ? profile.deskripsi:"Bio") : "Bio"),
                     SizedBox(height: 10,),
@@ -132,7 +134,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child:
                         GestureDetector(
                           child: Container(
-                            height: 20,
+                            height: 30,
                             width: 100,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),

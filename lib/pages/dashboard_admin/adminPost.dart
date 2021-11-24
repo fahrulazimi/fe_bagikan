@@ -67,6 +67,8 @@ class _AdminPostState extends State<AdminPost> {
   }
 }
 
+
+
 class Posts extends StatefulWidget {
   const Posts({
     Key key, this.id, this.username, this.email, this.token,
@@ -112,7 +114,34 @@ class _PostsState extends State<Posts> {
                     primary: Color(0xff1443C3),
                   ),
                   onPressed: () {
-                    DeletePost.deletePost(widget.token, widget.id).then((value) {
+                    showAlertDialog(context);
+                    // DeletePost.deletePost(widget.token, widget.id).then((value) {
+                    //   deletePost = value;
+                    //   setState(() {
+                    //     print(deletePost.message);
+                    //     Navigator.pushReplacement(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //         builder: (context) => AdminPage()));
+                    //   });
+                    // });
+                  },
+                  child: Text("Delete"))
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+  void showAlertDialog(BuildContext context) {  // set up the buttons
+  Widget cancelButton = FlatButton(
+    child: Text("Kembali"),
+    onPressed:  () {Navigator.of(context).pop();},
+  );
+  Widget continueButton = FlatButton(
+    child: Text("Hapus"),
+    onPressed:  () {
+      DeletePost.deletePost(widget.token, widget.id).then((value) {
                       deletePost = value;
                       setState(() {
                         print(deletePost.message);
@@ -122,12 +151,21 @@ class _PostsState extends State<Posts> {
                             builder: (context) => AdminPage()));
                       });
                     });
-                  },
-                  child: Text("Delete"))
-            ],
-          ),
-        ),
-      ],
-    );
-  }
+    },
+  );  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text("Hapus Post"),
+    content: Text("Anda yakin ingin hapus?"),
+    actions: [
+      cancelButton,
+      continueButton,
+    ],
+  );  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}
 }

@@ -234,7 +234,7 @@ class _TimelinePostsState extends State<TimelinePosts> {
                           Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => Homepage()));
+                                            builder: (context) => Homepage(tabIndex: 0)));
                         });
                       });
                     } else if(getLike.statusLike == "false") {
@@ -245,12 +245,11 @@ class _TimelinePostsState extends State<TimelinePosts> {
                           Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => Homepage()));
+                                            builder: (context) => Homepage(tabIndex: 0)));
                         });
                       });
                     }
                     }
-                    
                   });
                 },
               ),

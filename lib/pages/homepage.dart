@@ -9,12 +9,17 @@ import 'package:fe_bagikan/pages/timeline.dart';
 import 'package:flutter/material.dart';
 
 class Homepage extends StatefulWidget {
+  const Homepage({
+    Key key,
+    this.tabIndex,
+  }) : super(key: key);
+
+  final int tabIndex;
   @override
   _HomepageState createState() => _HomepageState();
 }
 
 class _HomepageState extends State<Homepage> {
-
 
   @override
 
@@ -30,6 +35,7 @@ class _HomepageState extends State<Homepage> {
 
     return DefaultTabController(
       length: 4,
+      initialIndex: widget.tabIndex,
       child: Scaffold(
         body: TabBarView(
           children: <Widget> [

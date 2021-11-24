@@ -143,11 +143,13 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                     )),
                   ),
                   onTap: () {
+                    showLoaderDialog(context);
                     if(_usernameController.text.isNotEmpty && _passwordController.text.isNotEmpty)
                     {
                       AdminLoginResult.adminLogin(_usernameController.text, _passwordController.text).then((value) {
                       adminLoginResult = value;
                         if(adminLoginResult.token == null){
+                          Navigator.pop(context);
                           Alert(
                           context: context,
                           title: "Login Gagal",
@@ -157,6 +159,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                           print("Data yang dimasukkan salah");
                         }
                         else {
+                          Navigator.pop(context);
                           print(adminLoginResult.token);
                           saveData();
                           getToken().then((s){
@@ -174,6 +177,13 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                     );        
                     }
                     else{
+                      Navigator.pop(context);
+                      Alert(
+                          context: context,
+                          title: "Login Gagal",
+                          desc: "Masih ada data yang kosong",
+                          type: AlertType.error,
+                        ).show();
                       print(Text("data masih ada yang kosong"));
                     }
                     if(mounted){setState(() {
@@ -208,6 +218,21 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
           ),
         ),
       ),
+    );
+  }
+  showLoaderDialog(BuildContext context){
+    AlertDialog alert=AlertDialog(
+      content: new Row(
+        children: [
+          CircularProgressIndicator(),
+          Container(margin: EdgeInsets.only(left: 10),child:Text("Menunggu..." )),
+        ],),
+    );
+    showDialog(barrierDismissible: false,
+      context:context,
+      builder:(BuildContext context){
+        return alert;
+      },
     );
   }
 }

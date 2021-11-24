@@ -161,43 +161,41 @@ List<DropdownMenuItem> generateItemsKategori(List<Kategori>kategori){
                             onChanged: (newValue) {
                               _kategoriIsON = newValue;
                                 if (_kategoriIsON) {
-                                  kategoriWidget = Container(
-                                    height: 50,
-                                    padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-                                    margin: EdgeInsets.fromLTRB(20, 5, 20, 15),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: Color(0xffE1E1E1),
+                                    kategoriWidget = Container(
+                                      height: 50,
+                                      padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                                      margin: EdgeInsets.fromLTRB(20, 5, 20, 15),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        color: Color(0xffE1E1E1),
+                                      ),
+                                      child: DropdownButton(
+                                      isExpanded: true,
+                                      hint: Text("Kategori" , style: TextStyle(fontSize: 16),),
+                                      style: TextStyle(fontSize: 16, color: Colors.black),
+                                      value: selectedKategori,
+                                      items: generateItemsKategori(kategori), 
+                                      onChanged: (itemKategori){
+                                        if (mounted) {
+                                          setState(() {
+                                            selectedKategori = itemKategori;
+                                            print(selectedKategori);
+                                          });
+                                        }
+                                      },
                                     ),
-                                    child: DropdownButton(
-                                    isExpanded: true,
-                                    hint: Text("Kategori" , style: TextStyle(fontSize: 16),),
-                                    style: TextStyle(fontSize: 16, color: Colors.black),
-                                    value: selectedKategori,
-                                    items: generateItemsKategori(kategori), 
-                                    onChanged: (itemKategori){
-                                      if (mounted) {
-                                        setState(() {
-                                          selectedKategori = itemKategori;
-                                        });
-                                      }
-                                    },
-                                  ),
-                                  );
+                                    );
                                 } else {
                                   kategoriWidget = SizedBox(
                                     height: 1,
                                   );
                                   if (mounted) {
                                         setState(() {
-                                          selectedKategori.kategoris = "";
+                                          selectedKategori = null;
                                         });
                                       }
-                                  
                                 }
-                              if(mounted){setState(() {
-                                
-                              });}
+                              if(mounted){setState(() {});}
                             })
                       ],
                     ),
@@ -280,6 +278,7 @@ List<DropdownMenuItem> generateItemsKategori(List<Kategori>kategori){
                             )),
                           ),
                           onTap: () {
+                            showLoaderDialog(context);
                             if (selectedKategori!=null) {
                             Search.getSearch(
                                     token,
@@ -291,7 +290,7 @@ List<DropdownMenuItem> generateItemsKategori(List<Kategori>kategori){
                               setState(() {
                                 print(posts.length);
                                 print(listPost);
-                                print(listPost[0].title);
+                                Navigator.pop(context);
                               });
                             });
                           }
@@ -306,7 +305,7 @@ List<DropdownMenuItem> generateItemsKategori(List<Kategori>kategori){
                               setState(() {
                                 print(posts.length);
                                 print(listPost);
-                                print(listPost[0].title);
+                                Navigator.pop(context);
                               });
                             });
                           }
@@ -317,7 +316,8 @@ List<DropdownMenuItem> generateItemsKategori(List<Kategori>kategori){
                     width: SizeConfig.blockHorizontal * 100,
                     child: SingleChildScrollView(
                       child: Column(
-                        children: List.generate(
+                        children: 
+                        List.generate(
                             (listPost != []) ? listPost.length : 0, (index) {
                           if (listPost != []) {
                             var revesedListPost = List.of(listPost.reversed);
@@ -346,11 +346,9 @@ List<DropdownMenuItem> generateItemsKategori(List<Kategori>kategori){
                               token: token,
                             );
                           }
-                          else{
-                              return NoPost();
-                            
-                          }
-                        }),
+                          else{print("tidak ada list");}
+                        }
+                        ),
                       ),
                     ),
                   )
@@ -360,6 +358,21 @@ List<DropdownMenuItem> generateItemsKategori(List<Kategori>kategori){
           ),
         ),
       ),
+    );
+  }
+  showLoaderDialog(BuildContext context){
+    AlertDialog alert=AlertDialog(
+      content: new Row(
+        children: [
+          CircularProgressIndicator(),
+          Container(margin: EdgeInsets.only(left: 10),child:Text("Menunggu..." )),
+        ],),
+    );
+    showDialog(barrierDismissible: false,
+      context:context,
+      builder:(BuildContext context){
+        return alert;
+      },
     );
   }
 }

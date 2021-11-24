@@ -110,7 +110,34 @@ class _UsersState extends State<Users> {
                     primary: Color(0xff1443C3),
                   ),
                   onPressed: () {
-                    DeleteUser.deleteUser(widget.token, widget.id).then((value) {
+                    showAlertDialog(context);
+                    // DeleteUser.deleteUser(widget.token, widget.id).then((value) {
+                    //   deleteUser = value;
+                    //   setState(() {
+                    //     print(deleteUser.message);
+                    //     Navigator.pushReplacement(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //         builder: (context) => AdminPage()));
+                    //   });
+                    // });
+                  },
+                  child: Text("Delete"))
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+  void showAlertDialog(BuildContext context) {  // set up the buttons
+  Widget cancelButton = FlatButton(
+    child: Text("Kembali"),
+    onPressed:  () {Navigator.of(context).pop();},
+  );
+  Widget continueButton = FlatButton(
+    child: Text("Hapus"),
+    onPressed:  () {
+      DeleteUser.deleteUser(widget.token, widget.id).then((value) {
                       deleteUser = value;
                       setState(() {
                         print(deleteUser.message);
@@ -120,12 +147,21 @@ class _UsersState extends State<Users> {
                             builder: (context) => AdminPage()));
                       });
                     });
-                  },
-                  child: Text("Delete"))
-            ],
-          ),
-        ),
-      ],
-    );
-  }
+    },
+  );  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text("Hapus Post"),
+    content: Text("Anda yakin ingin hapus?"),
+    actions: [
+      cancelButton,
+      continueButton,
+    ],
+  );  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}
 }

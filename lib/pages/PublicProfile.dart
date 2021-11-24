@@ -121,6 +121,10 @@ class _PublicProfilePageState extends State<PublicProfilePage> {
               ),
               Text((publicProfile != null) ? publicProfile.name : ""),
               SizedBox(
+                height: 5,
+              ),
+              Text((publicProfile != null) ? publicProfile.username : "", style: TextStyle(fontSize: 11, color: Colors.grey),),
+              SizedBox(
                 height: 10,
               ),
               Text((publicProfile != null) ? publicProfile.description : ""),
@@ -130,7 +134,7 @@ class _PublicProfilePageState extends State<PublicProfilePage> {
               Container(
                   child: GestureDetector(
                       child: Container(
-                        height: 20,
+                        height: 30,
                         width: 100,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),

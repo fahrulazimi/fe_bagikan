@@ -178,7 +178,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                           decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: (profile!=null)?profile.phone:"Nomor Tlp.",
+                              hintText: (profile!=null)?((profile.phone!=null)?profile.phone:"08xxxx"):"08xxxx.",
                               hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w300)),
                         ),
                       ),
@@ -202,6 +202,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             )),
                           ),
                           onTap: () async {
+                            showLoaderDialog(context);
                             if(_namaUserController.text.isNotEmpty || _bioUserController.text.isNotEmpty || _nomorUserController.text.isNotEmpty || _profilePicture!= null)
                             {
                               try {
@@ -235,10 +236,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   print(res.statusCode);
                                   if(res.statusCode == 201){
                                     setState(() {
+                                      Navigator.pop(context);
                                       Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(
-                                      builder: (context) => Homepage()), (route)=>false);
+                                      builder: (context) => Homepage(tabIndex: 3)), (route)=>false);
                                     });
                                     
                                   }
@@ -249,6 +251,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             }
                             else
                             {
+                              Navigator.pop(context);
                               Alert(
                               context: context,
                               title: "Edit Gagal",
@@ -269,6 +272,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
           ),
         ),
         ), 
+    );
+  }
+  showLoaderDialog(BuildContext context){
+    AlertDialog alert=AlertDialog(
+      content: new Row(
+        children: [
+          CircularProgressIndicator(),
+          Container(margin: EdgeInsets.only(left: 10),child:Text("Menunggu..." )),
+        ],),
+    );
+    showDialog(barrierDismissible: false,
+      context:context,
+      builder:(BuildContext context){
+        return alert;
+      },
     );
   }
 }

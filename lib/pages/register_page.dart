@@ -74,7 +74,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           onSaved: (input) => _username = input,
                           decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "Masukkan Username",
+                              hintText: "Username min. 5 karakter",
                               hintStyle: TextStyle(fontSize: 14)),
                         ),
                       ),
@@ -90,7 +90,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           onSaved: (input) => _email = input,
                           decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "Masukkan Email",
+                              hintText: "Email",
                               hintStyle: TextStyle(fontSize: 14)),
                         ),
                       ),
@@ -108,7 +108,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             obscureText: !_passwordVisible,
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "Masukkan Password",
+                              hintText: "Password min. 6 karakter",
                               hintStyle: TextStyle(fontSize: 14),
                               suffixIcon: IconButton(
                                 icon: Icon(
@@ -145,6 +145,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     )),
                   ),
                   onTap: () {
+                    showLoaderDialog(context);
                     if(_usernameController.text.isNotEmpty && _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty)
                     {
                       PostResult.connectToAPI(_usernameController.text, _emailController.text, _passwordController.text).then((input) {
@@ -153,6 +154,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         print("register");
                         if(postResult.message != "User stored successfully!")
                         {
+                          Navigator.pop(context);
                           Alert(
                               context: context,
                               title: "Register Gagal",
@@ -173,6 +175,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ).show();
                         }
                         else{
+                          Navigator.pop(context);
                           Alert(
                               context: context,
                               title: "Register Berhasil",
@@ -200,6 +203,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     );
                     }
                     else{
+                      Navigator.pop(context);
                       print(Text("data masih ada yang kosong"));
                       Alert(
                               context: context,
@@ -245,6 +249,21 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         ),
       ),
+    );
+  }
+  showLoaderDialog(BuildContext context){
+    AlertDialog alert=AlertDialog(
+      content: new Row(
+        children: [
+          CircularProgressIndicator(),
+          Container(margin: EdgeInsets.only(left: 10),child:Text("Menunggu..." )),
+        ],),
+    );
+    showDialog(barrierDismissible: false,
+      context:context,
+      builder:(BuildContext context){
+        return alert;
+      },
     );
   }
 }

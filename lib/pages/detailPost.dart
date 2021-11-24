@@ -247,6 +247,42 @@ class _DetailPostPageState extends State<DetailPostPage> {
     }
   }
 
+  void showAlertDialog(BuildContext context) {  // set up the buttons
+  Widget cancelButton = FlatButton(
+    child: Text("Kembali"),
+    onPressed:  () {Navigator.of(context).pop();},
+  );
+  Widget continueButton = FlatButton(
+    child: Text("Hapus"),
+    onPressed:  () {
+      DeletePost.deletePost(token, widget.id).then((value) {
+        deletePost = value;
+        setState(() {
+        print(deletePost.message);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+          builder: (context) => Homepage(tabIndex: 3)));
+        });
+      });
+    },
+  );  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text("Hapus Post"),
+    content: Text("Anda yakin ingin hapus?"),
+    actions: [
+      cancelButton,
+      continueButton,
+    ],
+  );  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}
+
   void _tripEditModalBottomSheet(context) {
     showModalBottomSheet(
         context: context,
@@ -303,16 +339,7 @@ class _DetailPostPageState extends State<DetailPostPage> {
                     ],
                   ),
                   onTap: () {
-                    DeletePost.deletePost(token, widget.id).then((value) {
-                      deletePost = value;
-                      setState(() {
-                        print(deletePost.message);
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                            builder: (context) => Homepage()));
-                      });
-                    });
+                    showAlertDialog(context);
                   },
                 ),
               ],

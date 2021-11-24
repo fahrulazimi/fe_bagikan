@@ -141,6 +141,7 @@ class _LoginPageState extends State<LoginPage> {
                     )),
                   ),
                   onTap: () {
+                    showLoaderDialog(context);
                     if (_usernameController.text.isNotEmpty &&
                         _passwordController.text.isNotEmpty) {
                       LoginResult.login(_usernameController.text,
@@ -148,6 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                           .then((value) {
                         loginResult = value;
                           if (loginResult.token == null) {
+                            Navigator.pop(context);
                             Alert(
                               context: context,
                               title: "Login Gagal",
@@ -168,6 +170,7 @@ class _LoginPageState extends State<LoginPage> {
                             ).show();
                             print("Data yang dimasukkan salah");
                           } else {
+                            Navigator.pop(context);
                             print(loginResult.token);
                             saveData();
                             getToken().then((s) {
@@ -179,13 +182,32 @@ class _LoginPageState extends State<LoginPage> {
                             Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Homepage()),
+                                    builder: (context) => Homepage(tabIndex: 0,)),
                                 (route) => false);
                           }
                         
                       }
                       );
                     } else {
+                      Navigator.pop(context);
+                      Alert(
+                              context: context,
+                              title: "Login Gagal",
+                              desc:
+                                  "Masih ada data yang kosong",
+                              type: AlertType.error,
+                              buttons: [
+                                DialogButton(
+                                  child: Text(
+                                    "OK",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 20),
+                                  ),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  width: 120,
+                                )
+                              ],
+                            ).show();
                       print(Text("data masih ada yang kosong"));
                     }
                     if(mounted){setState(() {
@@ -240,6 +262,21 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
+    );
+  }
+  showLoaderDialog(BuildContext context){
+    AlertDialog alert=AlertDialog(
+      content: new Row(
+        children: [
+          CircularProgressIndicator(),
+          Container(margin: EdgeInsets.only(left: 10),child:Text("Menunggu..." )),
+        ],),
+    );
+    showDialog(barrierDismissible: false,
+      context:context,
+      builder:(BuildContext context){
+        return alert;
+      },
     );
   }
 }

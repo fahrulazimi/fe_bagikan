@@ -166,12 +166,14 @@ class _FeedBackPublicPageState extends State<FeedBackPublicPage> {
                               color: Colors.grey,
                             ),
                             onPressed: () {
+                              showLoaderDialog(context);
                                 BuatFeedback.buatFeedback(token, widget.id,
                                         _feedBackController.text)
                                     .then((value) {
                                   buatFeedback = value;
                                   if (mounted) {
                                   setState(() {
+                                    Navigator.pop(context);
                                     print(buatFeedback);
                                     Navigator.pushReplacement(
                                         context,
@@ -216,6 +218,21 @@ class _FeedBackPublicPageState extends State<FeedBackPublicPage> {
           ),
         ),
       ),
+    );
+  }
+  showLoaderDialog(BuildContext context){
+    AlertDialog alert=AlertDialog(
+      content: new Row(
+        children: [
+          CircularProgressIndicator(),
+          Container(margin: EdgeInsets.only(left: 10),child:Text("Menunggu..." )),
+        ],),
+    );
+    showDialog(barrierDismissible: false,
+      context:context,
+      builder:(BuildContext context){
+        return alert;
+      },
     );
   }
 }

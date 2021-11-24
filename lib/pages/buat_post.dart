@@ -367,6 +367,7 @@ List<DropdownMenuItem> generateItemsExpired(List<Expired>expired){
                             )),
                           ),
                           onTap: () async {
+                            showLoaderDialog(context);
                             if(_namaBarangController.text.isNotEmpty && _deskripsiBarangController.text.isNotEmpty && selectedKategori != null && _lokasiController.text.isNotEmpty && selectedExpired != null && _picturePost != null)
                             {
                                 if (profile.phone != null) {
@@ -401,10 +402,27 @@ List<DropdownMenuItem> generateItemsExpired(List<Expired>expired){
                                             print(res.statusCode);
                                             if(res.statusCode == 201){
                                               setState(() {
-                                                Navigator.pushAndRemoveUntil(
+                                                Navigator.pop(context);
+                                                Alert(
+                              context: context,
+                              title: "Berhasil buat post",
+                              type: AlertType.success,
+                              buttons: [
+                                DialogButton(
+                                  child: Text(
+                                    "OK",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 20),
+                                  ),
+                                  onPressed: () => {Navigator.pushAndRemoveUntil(
                                                 context,
                                                 MaterialPageRoute(
-                                                builder: (context) => Homepage()), (route)=>false);
+                                                builder: (context) => Homepage(tabIndex: 0)), (route)=>false)},
+                                  width: 120,
+                                )
+                              ],
+                            ).show();
+                                                
                                               });
                                               
                                             }
@@ -414,9 +432,10 @@ List<DropdownMenuItem> generateItemsExpired(List<Expired>expired){
                                             }
                                       }
                                       else{
+                                        Navigator.pop(context);
                                         Alert(
                                           context: context,
-                                          title: "Bust Post Gagal",
+                                          title: "Buat Post Gagal",
                                           desc:"Expired yang dimasukkan tidak sesuai",
                                           type: AlertType.error,
                                           buttons: [
@@ -434,6 +453,7 @@ List<DropdownMenuItem> generateItemsExpired(List<Expired>expired){
                                       }
                                     }
                                   else{
+                                    Navigator.pop(context);
                                     Alert(
                                   context: context,
                                   title: "Bust Post Gagal",
@@ -454,9 +474,10 @@ List<DropdownMenuItem> generateItemsExpired(List<Expired>expired){
                                 }
                                 }
                                 else{
+                                  Navigator.pop(context);
                                   Alert(
                                 context: context,
-                                title: "Bust Post Gagal",
+                                title: "Buat Post Gagal",
                                 desc:"Harap tambahkan nomor telepon pada profile",
                                 type: AlertType.error,
                                 buttons: [
@@ -475,9 +496,10 @@ List<DropdownMenuItem> generateItemsExpired(List<Expired>expired){
                             }
                             else
                             {
+                              Navigator.pop(context);
                               Alert(
                               context: context,
-                              title: "Bust Post Gagal",
+                              title: "Buat Post Gagal",
                               desc:"Masih ada data yang kosong",
                               type: AlertType.error,
                               buttons: [
@@ -505,6 +527,21 @@ List<DropdownMenuItem> generateItemsExpired(List<Expired>expired){
           ),
         ),
       ),
+    );
+  }
+  showLoaderDialog(BuildContext context){
+    AlertDialog alert=AlertDialog(
+      content: new Row(
+        children: [
+          CircularProgressIndicator(),
+          Container(margin: EdgeInsets.only(left: 10),child:Text("Menunggu..." )),
+        ],),
+    );
+    showDialog(barrierDismissible: false,
+      context:context,
+      builder:(BuildContext context){
+        return alert;
+      },
     );
   }
 }
