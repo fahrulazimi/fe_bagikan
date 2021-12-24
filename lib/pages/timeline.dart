@@ -1,11 +1,13 @@
 import 'package:fe_bagikan/api/get_all_post.dart';
 import 'package:fe_bagikan/api/like_post.dart';
+import 'package:fe_bagikan/api/user_model.dart';
 import 'package:fe_bagikan/constant/post_json.dart';
 import 'package:fe_bagikan/helper/layout.dart';
 import 'package:fe_bagikan/pages/PublicProfile.dart';
 import 'package:fe_bagikan/pages/detailPost.dart';
 import 'package:fe_bagikan/pages/detailPostPublic.dart';
 import 'package:fe_bagikan/pages/homepage.dart';
+import 'package:fe_bagikan/pages/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -151,6 +153,7 @@ class _TimelinePostsState extends State<TimelinePosts> {
   LikePost likePost;
   DislikePost dislikePost;
   GetLike getLike;
+  Profile profile;
 
   @override
   void initState() {
@@ -166,6 +169,14 @@ class _TimelinePostsState extends State<TimelinePosts> {
     }
       if(mounted){setState(() {});}
     });
+    Profile.getProfile(widget.token).then((value) {
+          profile = value; 
+          if (mounted) {
+            setState(() {
+              print(profile);
+              });
+          }
+          });
   }
 
   @override
@@ -194,12 +205,23 @@ class _TimelinePostsState extends State<TimelinePosts> {
             ),
           ),
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => PublicProfilePage(
-                          id: widget.userId,
-                        )));
+            if (profile != null) {
+              if(widget.userId == profile.id){
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ProfilePage()
+                      ));
+              }
+              else{
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PublicProfilePage(
+                            id: widget.userId,
+                          )));
+              }
+            }
           },
         ),
         Container(
@@ -254,9 +276,11 @@ class _TimelinePostsState extends State<TimelinePosts> {
                 },
               ),
             ),
-            Text(
-              widget.likes + " likes",
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            Container(
+              child: Text(
+                widget.likes + " likes",
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              ),
             ),
           ],
         ),
@@ -281,11 +305,22 @@ class _TimelinePostsState extends State<TimelinePosts> {
               ),
               onTap: () {
                 setState(() {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              DetailPostPublicPage(id: widget.id)));
+                  if (profile != null) {
+                    if(widget.userId == profile.id){
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                DetailPostPage(id: widget.id)));
+                    } 
+                    else{
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  DetailPostPublicPage(id: widget.id)));
+                    }
+                  }
                 });
               },
             )),

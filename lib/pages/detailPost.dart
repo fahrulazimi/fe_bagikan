@@ -5,8 +5,10 @@ import 'package:fe_bagikan/api/get_post_detail.dart';
 import 'package:fe_bagikan/api/like_post.dart';
 import 'package:fe_bagikan/constant/post_json.dart';
 import 'package:fe_bagikan/helper/layout.dart';
+import 'package:fe_bagikan/pages/PublicProfile.dart';
 import 'package:fe_bagikan/pages/editPost.dart';
 import 'package:fe_bagikan/pages/homepage.dart';
+import 'package:fe_bagikan/pages/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -108,21 +110,35 @@ class _DetailPostPageState extends State<DetailPostPage> {
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(left: 20, right: 15),
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage((postDetail != null)
-                                  ? (postDetail.profilePicture)
-                                  : ("https://nd.net/wp-content/uploads/2016/04/profile-dummy.png")))),
-                    ),
-                    Text(
-                      (postDetail != null) ? postDetail.username : "",
-                      style: TextStyle(fontSize: 16),
+                    GestureDetector(
+                      child: Container(
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                              margin: EdgeInsets.only(left: 20, right: 15),
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: NetworkImage((postDetail != null)
+                                          ? (postDetail.profilePicture)
+                                          : ("https://nd.net/wp-content/uploads/2016/04/profile-dummy.png")))),
+                            ),
+                            Text(
+                              (postDetail != null) ? postDetail.username : "",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                      ),
+                      onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ProfilePage()));
+                    },
                     ),
                     Spacer(),
                     GestureDetector(
@@ -259,10 +275,11 @@ class _DetailPostPageState extends State<DetailPostPage> {
         deletePost = value;
         setState(() {
         print(deletePost.message);
-        Navigator.pushReplacement(
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-          builder: (context) => Homepage(tabIndex: 3)));
+          builder: (context) => Homepage(tabIndex: 3)),
+          (route) => false);
         });
       });
     },

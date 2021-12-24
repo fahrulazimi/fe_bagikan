@@ -74,7 +74,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           onSaved: (input) => _username = input,
                           decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "Username min. 5 karakter",
+                              hintText: "Username min. 6 karakter",
                               hintStyle: TextStyle(fontSize: 14)),
                         ),
                       ),

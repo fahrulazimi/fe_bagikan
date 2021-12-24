@@ -5,7 +5,9 @@ import 'package:fe_bagikan/api/buat_post_model.dart';
 import 'package:fe_bagikan/api/like_post.dart';
 import 'package:fe_bagikan/api/search.dart';
 import 'package:fe_bagikan/api/user_model.dart';
+import 'package:fe_bagikan/pages/detailPost.dart';
 import 'package:fe_bagikan/pages/homepage.dart';
+import 'package:fe_bagikan/pages/profile.dart';
 import 'package:fe_bagikan/pages/timeline.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -159,43 +161,10 @@ List<DropdownMenuItem> generateItemsKategori(List<Kategori>kategori){
                             activeColor: Color(0xff1443C3),
                             value: _kategoriIsON,
                             onChanged: (newValue) {
-                              _kategoriIsON = newValue;
-                                if (_kategoriIsON) {
-                                    kategoriWidget = Container(
-                                      height: 50,
-                                      padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-                                      margin: EdgeInsets.fromLTRB(20, 5, 20, 15),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(15),
-                                        color: Color(0xffE1E1E1),
-                                      ),
-                                      child: DropdownButton(
-                                      isExpanded: true,
-                                      hint: Text("Kategori" , style: TextStyle(fontSize: 16),),
-                                      style: TextStyle(fontSize: 16, color: Colors.black),
-                                      value: selectedKategori,
-                                      items: generateItemsKategori(kategori), 
-                                      onChanged: (itemKategori){
-                                        if (mounted) {
-                                          setState(() {
-                                            selectedKategori = itemKategori;
-                                            print(selectedKategori);
-                                          });
-                                        }
-                                      },
-                                    ),
-                                    );
-                                } else {
-                                  kategoriWidget = SizedBox(
-                                    height: 1,
-                                  );
-                                  if (mounted) {
-                                        setState(() {
-                                          selectedKategori = null;
-                                        });
-                                      }
-                                }
-                              if(mounted){setState(() {});}
+                              setState(() {
+                                _kategoriIsON = newValue;
+                                selectedKategori = null;
+                              });
                             })
                       ],
                     ),
@@ -249,8 +218,33 @@ List<DropdownMenuItem> generateItemsKategori(List<Kategori>kategori){
                   ),
 
                   AnimatedSwitcher(
-                    child: kategoriWidget,
-                    duration: Duration(milliseconds: 500),
+                    child: _kategoriIsON
+                      ? Container(
+                                      height: 50,
+                                      padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                                      margin: EdgeInsets.fromLTRB(20, 5, 20, 15),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        color: Color(0xffE1E1E1),
+                                      ),
+                                      child: DropdownButton(
+                                      isExpanded: true,
+                                      hint: Text("Kategori" , style: TextStyle(fontSize: 16),),
+                                      style: TextStyle(fontSize: 16, color: Colors.black),
+                                      value: selectedKategori,
+                                      items: generateItemsKategori(kategori), 
+                                      onChanged: (itemKategori){
+                                        if (mounted) {
+                                          setState(() {
+                                            selectedKategori = itemKategori;
+                                            print(selectedKategori);
+                                          });
+                                        }
+                                      },
+                                    ),
+                                    )
+                      : SizedBox(),
+                  duration: Duration(milliseconds: 500),
                   ),
                   AnimatedSwitcher(
                     child: lokasiWidget,
@@ -291,6 +285,26 @@ List<DropdownMenuItem> generateItemsKategori(List<Kategori>kategori){
                                 print(posts.length);
                                 print(listPost);
                                 Navigator.pop(context);
+                                if(listPost.isEmpty){
+                                  Alert(
+                              context: context,
+                              // title: "Register Gagal",
+                              desc:
+                                  "Hasil tidak ditemukan",
+                              // type: AlertType.error,
+                              buttons: [
+                                DialogButton(
+                                  child: Text(
+                                    "OK",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 20),
+                                  ),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  width: 120,
+                                )
+                              ],
+                            ).show();
+                                }
                               });
                             });
                           }
@@ -306,6 +320,26 @@ List<DropdownMenuItem> generateItemsKategori(List<Kategori>kategori){
                                 print(posts.length);
                                 print(listPost);
                                 Navigator.pop(context);
+                                if(listPost.isEmpty){
+                                  Alert(
+                              context: context,
+                              // title: "Register Gagal",
+                              desc:
+                                  "Hasil tidak ditemukan",
+                              // type: AlertType.error,
+                              buttons: [
+                                DialogButton(
+                                  child: Text(
+                                    "OK",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 20),
+                                  ),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  width: 120,
+                                )
+                              ],
+                            ).show();
+                                }
                               });
                             });
                           }
@@ -346,7 +380,6 @@ List<DropdownMenuItem> generateItemsKategori(List<Kategori>kategori){
                               token: token,
                             );
                           }
-                          else{print("tidak ada list");}
                         }
                         ),
                       ),
@@ -430,6 +463,7 @@ class _TimelinePostsState extends State<TimelinePosts> {
   LikePost likePost;
   DislikePost dislikePost;
   GetLike getLike;
+  Profile profile;
 
   @override
   void initState() {
@@ -446,6 +480,14 @@ class _TimelinePostsState extends State<TimelinePosts> {
         }
       });
     });
+    Profile.getProfile(widget.token).then((value) {
+          profile = value; 
+          if (mounted) {
+            setState(() {
+              print(profile);
+              });
+          }
+          });
   }
 
   @override
@@ -474,12 +516,23 @@ class _TimelinePostsState extends State<TimelinePosts> {
             ),
           ),
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => PublicProfilePage(
-                          id: widget.userId,
-                        )));
+            if (profile != null) {
+              if(widget.userId == profile.id){
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ProfilePage()
+                      ));
+              }
+              else{
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PublicProfilePage(
+                            id: widget.userId,
+                          )));
+              }
+            }
           },
         ),
         Container(
@@ -514,11 +567,22 @@ class _TimelinePostsState extends State<TimelinePosts> {
               ),
               onTap: () {
                 setState(() {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              DetailPostPublicPage(id: widget.id)));
+                  if (profile != null) {
+                    if(widget.userId == profile.id){
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                DetailPostPage(id: widget.id)));
+                    } 
+                    else{
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  DetailPostPublicPage(id: widget.id)));
+                    }
+                  }
                 });
               },
             )),

@@ -237,10 +237,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   if(res.statusCode == 201){
                                     setState(() {
                                       Navigator.pop(context);
-                                      Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                      builder: (context) => Homepage(tabIndex: 3)), (route)=>false);
+                                                Alert(
+                              context: context,
+                              title: "Berhasil edit profile",
+                              type: AlertType.success,
+                              buttons: [
+                                DialogButton(
+                                  child: Text(
+                                    "OK",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 20),
+                                  ),
+                                  onPressed: () => {Navigator.pushAndRemoveUntil(
+                                                context,
+                                                MaterialPageRoute(
+                                                builder: (context) => Homepage(tabIndex: 3)), (route)=>false)},
+                                  width: 120,
+                                )
+                              ],
+                            ).show();
+
+                                      // Navigator.pop(context);
+                                      // Navigator.pushAndRemoveUntil(
+                                      // context,
+                                      // MaterialPageRoute(
+                                      // builder: (context) => Homepage(tabIndex: 3)), (route)=>false);
                                     });
                                     
                                   }

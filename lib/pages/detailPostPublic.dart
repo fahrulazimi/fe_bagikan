@@ -4,6 +4,7 @@ import 'package:fe_bagikan/api/get_post_detail.dart';
 import 'package:fe_bagikan/api/like_post.dart';
 import 'package:fe_bagikan/constant/post_json.dart';
 import 'package:fe_bagikan/helper/layout.dart';
+import 'package:fe_bagikan/pages/PublicProfile.dart';
 import 'package:fe_bagikan/pages/editPost.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -127,22 +128,34 @@ class _DetailPostPublicPageState extends State<DetailPostPublicPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Container(
-                    margin: EdgeInsets.only(left: 20, right: 15) ,
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: (postDetail!=null)?NetworkImage(postDetail.profilePicture):NetworkImage("https://nd.net/wp-content/uploads/2016/04/profile-dummy.png")
-                      )
+                GestureDetector(
+                  child: Container(
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                        margin: EdgeInsets.only(left: 20, right: 15) ,
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: (postDetail!=null)?NetworkImage(postDetail.profilePicture):NetworkImage("https://nd.net/wp-content/uploads/2016/04/profile-dummy.png")
+                          )
+                        ),
+                        ),
+                        Text((postDetail!=null)?postDetail.username:"", style: TextStyle(fontSize: 16),),
+                      ],
                     ),
-                    ),
-                    Text((postDetail!=null)?postDetail.username:"", style: TextStyle(fontSize: 16),),
-                  ],
+                  ),
+                  onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PublicProfilePage(
+                                    id: (postDetail != null) ? postDetail.userId : "",
+                                  )));
+                    },
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 10),

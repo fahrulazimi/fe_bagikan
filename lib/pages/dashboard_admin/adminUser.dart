@@ -141,16 +141,17 @@ class _UsersState extends State<Users> {
                       deleteUser = value;
                       setState(() {
                         print(deleteUser.message);
-                        Navigator.pushReplacement(
+                        Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
-                            builder: (context) => AdminPage()));
+                            builder: (context) => AdminPage()),
+                            (route) => false);
                       });
                     });
     },
   );  // set up the AlertDialog
   AlertDialog alert = AlertDialog(
-    title: Text("Hapus Post"),
+    title: Text("Hapus User"),
     content: Text("Anda yakin ingin hapus?"),
     actions: [
       cancelButton,

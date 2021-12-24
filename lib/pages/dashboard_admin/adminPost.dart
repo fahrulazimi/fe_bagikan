@@ -145,10 +145,11 @@ class _PostsState extends State<Posts> {
                       deletePost = value;
                       setState(() {
                         print(deletePost.message);
-                        Navigator.pushReplacement(
+                        Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
-                            builder: (context) => AdminPage()));
+                            builder: (context) => AdminPage()),
+                            (route) => false);
                       });
                     });
     },
